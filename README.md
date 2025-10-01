@@ -12,6 +12,7 @@ A Java-based desktop application designed to simplify tracking student attendanc
 Detailed design and planning documents are available in the [`docs`](./docs) folder.
 
 - [Design Document](./docs/DESIGN.md)
+- [Update log](./docs/UPDATE.md)
 
 ## Getting Started
 1. Clone the repository:
