@@ -11,9 +11,9 @@
   - [X] settings
 
 ## Phase 1.5: Settings System
-- [ ] Implement `settings` table CRUD
-- [ ] Add methods to save and load settings (e.g. window size, position, last opened week)
-- [ ] Integrate settings into GUI initialization (window restores last position/size)
+- [x] Implement `settings` table CRUD
+- [x] Add methods to save and load settings (e.g. window size, position, last opened week)
+- [x] Integrate settings into GUI initialization (window restores last position/size)
 
 ## Phase 2: Student Basics
 - [ ] Implement CRUD operations for students
