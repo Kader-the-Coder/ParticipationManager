@@ -76,15 +76,15 @@
 | reflections   | TEXT    | optional                               |
 
 ### criteria_weights
-| Column        | Type    | Notes                                  |
-|---------------|---------|----------------------------------------|
-| id            | INTEGER | PRIMARY KEY AUTOINCREMENT              |
-| participation | INTEGER | weight (percentage)                    |
-| camera        | INTEGER | weight                                 |
-| on_time       | INTEGER | weight                                 |
-| behaviour     | INTEGER | weight                                 |
-| attendance    | INTEGER | weight                                 |
-| effective_date| DATE    | allows changing weights over time      |
+| Column         | Type    | Notes                             |
+|----------------|---------|-----------------------------------|
+| id             | INTEGER | PRIMARY KEY AUTOINCREMENT         |
+| participation  | INTEGER | weight (percentage)               |
+| camera         | INTEGER | weight                            |
+| on_time        | INTEGER | weight                            |
+| behaviour      | INTEGER | weight                            |
+| attendance     | INTEGER | weight                            |
+| effective_date | DATE    | allows changing weights over time |
 
 ### settings
 | Column     | Type    | Notes                                  |

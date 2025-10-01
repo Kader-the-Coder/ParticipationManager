@@ -1,14 +1,14 @@
 # ParticipationManager - Implementation Steps
 
 ## Phase 1: Database Schema
-- [ ] Create database schema with the following tables:
-  - [ ] students
-  - [ ] quarters
-  - [ ] weeks
-  - [ ] days
-  - [ ] daily_scores
-  - [ ] criteria_weights
-  - [ ] settings
+- [X] Create database schema with the following tables:
+  - [X] students
+  - [X] quarters
+  - [X] weeks
+  - [X] days
+  - [X] daily_scores
+  - [X] criteria_weights
+  - [X] settings
 
 ## Phase 1.5: Settings System
 - [ ] Implement `settings` table CRUD
