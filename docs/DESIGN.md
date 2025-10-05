@@ -32,11 +32,32 @@
 - Total score displayed as a percentage out of 100%.
 
 ## Database Tables
+
 ### students
+| Column     | Type    | Notes                                 |
+|------------|---------|---------------------------------------|
+| id         | INTEGER | PRIMARY KEY AUTOINCREMENT             |
+| name       | TEXT    | NOT NULL                              |
+| grade_id   | INTEGER | FOREIGN KEY → grades(id)              |
+
+### grades
 | Column     | Type    | Notes                     |
 |------------|---------|---------------------------|
 | id         | INTEGER | PRIMARY KEY AUTOINCREMENT |
-| name       | TEXT    | NOT NULL                  |
+| name       | TEXT    | NOT NULL, UNIQUE          |
+
+### subjects
+| Column     | Type    | Notes                     |
+|------------|---------|---------------------------|
+| id         | INTEGER | PRIMARY KEY AUTOINCREMENT |
+| name       | TEXT    | NOT NULL, UNIQUE          |
+
+### student_subject
+| Column      | Type    | Notes                                        |
+|-------------|---------|----------------------------------------------|
+| student_id  | INTEGER | FOREIGN KEY → students(id)                  |
+| subject_id  | INTEGER | FOREIGN KEY → subjects(id)                  |
+| PRIMARY KEY | (student_id, subject_id) | ensures no duplicate enrollment |
 
 ### quarters
 | Column     | Type    | Notes                     |

@@ -16,7 +16,7 @@
 - [x] Integrate settings into GUI initialization (window restores last position/size)
 
 ## Phase 2: Student Basics
-- [ ] Implement CRUD operations for students
+- [X] Implement CRUD operations for students
 - [ ] Create simple GUI for adding/editing/removing students
 - [ ] Display student list in GUI
 

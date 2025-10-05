@@ -82,13 +82,42 @@ public class DB {
 
   private static void createTables() {
     try (Statement stmt = connection.createStatement()) {
-      // students
+      // Grades
       stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS students (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL
-                )
-            """);
+            CREATE TABLE IF NOT EXISTS grades (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE
+            );
+        """);
+
+      // Subjects
+      stmt.executeUpdate("""
+            CREATE TABLE IF NOT EXISTS subjects (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE
+            );
+        """);
+
+      // Students
+      stmt.executeUpdate("""
+            CREATE TABLE IF NOT EXISTS students (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                grade_id INTEGER,
+                FOREIGN KEY (grade_id) REFERENCES grades(id)
+            );
+        """);
+
+      // Join table: student_subject
+      stmt.executeUpdate("""
+            CREATE TABLE IF NOT EXISTS student_subject (
+                student_id INTEGER NOT NULL,
+                subject_id INTEGER NOT NULL,
+                PRIMARY KEY (student_id, subject_id),
+                FOREIGN KEY (student_id) REFERENCES students(id),
+                FOREIGN KEY (subject_id) REFERENCES subjects(id)
+            );
+        """);
 
       // quarters
       stmt.executeUpdate("""
