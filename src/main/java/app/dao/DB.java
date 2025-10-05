@@ -98,6 +98,31 @@ public class DB {
             );
         """);
 
+      // --- Insert grades 1 to 12 ---
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('1')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('2')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('3')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('4')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('5')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('6')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('7')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('8')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('9')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('10')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('11')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO grades (name) VALUES ('12')");
+
+      // --- Insert subjects from timetable ---
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Quran')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Arabic Beg/Quran Adv')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Math')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Science')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('History')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Arabic')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Islamic Studies')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('English')");
+      stmt.executeUpdate("INSERT OR IGNORE INTO subjects (name) VALUES ('Quran Beg/Arabic Adv')");
+
       // Students
       stmt.executeUpdate("""
             CREATE TABLE IF NOT EXISTS students (

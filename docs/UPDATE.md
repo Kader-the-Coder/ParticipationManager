@@ -17,8 +17,8 @@
 
 ## Phase 2: Student Basics
 - [X] Implement CRUD operations for students
-- [ ] Create simple GUI for adding/editing/removing students
-- [ ] Display student list in GUI
+- [X] Create simple GUI for adding/editing/removing students
+- [X] Display student list in GUI
 
 ## Phase 3: Quarters & Weeks
 - [ ] Implement CRUD for quarters

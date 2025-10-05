@@ -1,6 +1,9 @@
 package main.java.app.models;
 
+import main.java.app.dao.GradeDAO;
 import main.java.app.dao.StudentDAO;
+import main.java.app.dao.SubjectDAO;
+
 import java.util.List;
 
 /**
@@ -23,14 +26,46 @@ public class Student {
     this(-1, name, gradeId, subjectIds);
   }
 
-  public int getId() { return id; }
-  public String getName() { return name; }
-  public int getGradeId() { return gradeId; }
-  public List<Integer> getSubjectIds() { return subjectIds; }
+  // Returns the student id
+  public int getId() {
+    return id;
+  }
 
-  public void setName(String name) { this.name = name; }
-  public void setGradeId(int gradeId) { this.gradeId = gradeId; }
-  public void setSubjectIds(List<Integer> subjectIds) { this.subjectIds = subjectIds; }
+  // Returns the student name
+  public String getName() {
+    return name;
+  }
+
+  // Returns the grade name
+  public String getGradeName() {
+    return GradeDAO.getNameById(gradeId);
+  }
+
+  // Returns the grade ID
+  public int getGradeId() {
+    return gradeId;
+  }
+
+  // Returns the student subjects as a list of ids
+  public List<Integer> getSubjectIds() {
+    return subjectIds;
+  }
+
+  public List<String> getSubjectNames() {
+    return SubjectDAO.getNamesForIds(subjectIds);
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setGradeId(int gradeId) {
+    this.gradeId = gradeId;
+  }
+
+  public void setSubjectIds(List<Integer> subjectIds) {
+    this.subjectIds = subjectIds;
+  }
 
   /**
    * Updates this student and their subjects in the database.

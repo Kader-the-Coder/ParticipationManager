@@ -13,6 +13,7 @@ public class MainFrame extends JFrame {
   public MainFrame() {
     setTitle("ParticipationManager");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setAlwaysOnTop(true);
 
     // Load last size and position
     int width = Integer.parseInt(SettingsDAO.loadSetting("window_width", "800"));
@@ -22,6 +23,10 @@ public class MainFrame extends JFrame {
 
     setSize(new Dimension(width, height));
     setLocation(new Point(x, y));
+
+    // Add StudentManagerPanel
+    StudentManagerPanel studentPanel = new StudentManagerPanel();
+    setContentPane(studentPanel);
 
     // Add a listener to save settings when window closes
     addWindowListener(new WindowAdapter() {
