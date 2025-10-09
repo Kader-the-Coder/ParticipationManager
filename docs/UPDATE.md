@@ -20,6 +20,17 @@
 - [X] Create simple GUI for adding/editing/removing students
 - [X] Display student list in GUI
 
+## Phase 2.5: Main Menu - Changelog
+- [X] Implement navigation system (e.g. CardLayout or MainFrame.showPanel(name)) for switching between sections
+- [X] Centralize shared state (e.g. selected quarter/week) in main controller or frame
+- [X] Add dynamic title/header bar that updates with current section name
+- [X] Create button to manage settings
+- [X] Create button to manage students
+- [X] Create button managing quarters
+- [X] Ensure code allows for adding more buttons in the future
+- [X] Add “Back to Menu” button/action in each subpanel
+- [X] Reserve space for future sections (e.g. Reports, Analytics)
+
 ## Phase 3: Quarters & Weeks
 - [ ] Implement CRUD for quarters
 - [ ] Implement automatic week numbering logic (resets each quarter)
