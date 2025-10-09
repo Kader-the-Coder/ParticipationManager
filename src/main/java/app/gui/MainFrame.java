@@ -36,12 +36,12 @@ public class MainFrame extends JFrame {
 
     MainMenuPanel menuPanel = new MainMenuPanel(this);
     StudentManagerPanel studentPanel = new StudentManagerPanel(this);
-    // QuartersPanel quartersPanel = new QuartersPanel(this);
+    QuartersPanel quartersPanel = new QuartersPanel(this);
     // SettingsPanel settingsPanel = new SettingsPanel(this);
 
     cardPanel.add(menuPanel, "menu");
     cardPanel.add(studentPanel, "students");
-    // cardPanel.add(quartersPanel, "quarters");
+    cardPanel.add(quartersPanel, "quarters");
     // cardPanel.add(settingsPanel, "settings");
 
     setContentPane(cardPanel);

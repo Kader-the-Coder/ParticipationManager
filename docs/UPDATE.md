@@ -32,7 +32,7 @@
 - [X] Reserve space for future sections (e.g. Reports, Analytics)
 
 ## Phase 3: Quarters & Weeks
-- [ ] Implement CRUD for quarters
+- [X] Implement CRUD for quarters
 - [ ] Implement automatic week numbering logic (resets each quarter)
 - [ ] GUI for selecting quarter and week
 
