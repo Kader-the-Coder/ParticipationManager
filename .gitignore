@@ -40,6 +40,10 @@ target/
 # Database files
 *.db
 
+# Testing
+*.sql
+*.py
+
 # OS files
 .DS_Store
 Thumbs.db
