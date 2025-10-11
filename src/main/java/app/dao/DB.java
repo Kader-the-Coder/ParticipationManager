@@ -153,25 +153,11 @@ public class DB {
                 )
             """);
 
-      // weeks
-      stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS weeks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    quarter_id INTEGER,
-                    week_number INTEGER,
-                    start_date DATE,
-                    FOREIGN KEY (quarter_id) REFERENCES quarters(id)
-                )
-            """);
-
       // days
       stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS days (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    week_id INTEGER,
-                    date DATE,
-                    UNIQUE(week_id, date),
-                    FOREIGN KEY (week_id) REFERENCES weeks(id)
+                    date DATE UNIQUE,
                 )
             """);
 

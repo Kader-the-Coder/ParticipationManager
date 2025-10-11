@@ -31,24 +31,66 @@
 - [X] Add “Back to Menu” button/action in each subpanel
 - [X] Reserve space for future sections (e.g. Reports, Analytics)
 
-## Phase 3: Quarters & Weeks
-- [X] Implement CRUD for quarters
-- [ ] Implement automatic week numbering logic (resets each quarter)
-- [ ] GUI for selecting quarter and week
+## Phase 3: Daily Tracking UI
+- [ ] Create main panel for daily tracking
+  - [ ] Add table/grid to display students and their daily scores
+  - [ ] Add columns for Participation, Camera, On Time, Behaviour, Attendance, Daily Total
+  - [ ] Add input fields or editable cells for each criterion per student
+  - [ ] Add a column for Notes per student
+  - [ ] Add a column for Reflections per student
+  - [ ] Implement row selection for editing a student’s daily entry
+  - [ ] Add scroll functionality for large student lists
+  - [ ] Add header with column labels
+  - [ ] Implement dynamic resizing so grid fits window
+  - [ ] Highlight the current day in the grid
+  - [ ] Add buttons for saving or canceling changes
 
-## Phase 4: Daily Tracking
-- [ ] Implement saving of daily scores per student
-- [ ] Implement changeable criteria weights
-- [ ] GUI grid for entering Participation, Camera, On Time, Behaviour, Attendance
-- [ ] Auto-calculation of Daily Total
-- [ ] Notes per criteria and reflections per day
+## Phase 4: Daily Tracking Filters
+- [ ] Implement logic to filter out students
+  - [ ] Implement filter to select student by quarter
+    - [ ] Display available quarters in a dropdown or list
+  - [ ] Implement filter to select student by week
+    - [ ] Display weeks dynamically based on selected quarter
+  - [ ] Ensure filtering by quarter updates the week options
+  - [ ] Combine filters so multiple criteria can be applied simultaneously
+  - [ ] Update GUI to reflect filtered student list in real-time
+  - [ ] Persist selected filters between sessions
+  - [ ] Validate filter inputs and handle edge cases (e.g., no data for selected week)
 
-## Phase 5: Retrieval & Editing
-- [ ] View scores per week/day for each student
-- [ ] Edit saved scores, notes, and reflections
+## Phase 5: Daily Tracking Logic
+- [ ] Implement saving of daily scores per student (linked to `days`)
+- [ ] Implement changeable participation weight
+- [ ] Implement changeable camera weight
+- [ ] Implement changeable on-time weight
+- [ ] Implement changeable behaviour weight
+- [ ] Implement changeable attendance weight
+- [ ] Implement GUI grid for entering Participation
+- [ ] Implement GUI grid for entering Camera
+- [ ] Implement GUI grid for entering On Time
+- [ ] Implement GUI grid for entering Behaviour
+- [ ] Implement GUI grid for entering Attendance
+- [ ] Implement auto-calculation of Daily Total
+- [ ] Implement notes per criterion
+- [ ] Implement reflections per day
+
+## Phase 6: Quarters & Filters
+- [X] Implement CRUD for quarters (used as filters; start dates are saved)
+- [ ] Implement GUI for selecting quarter (week selection derived dynamically from days)
+- [ ] Implement dynamic week numbering logic based on quarter start date (programmatic, not stored)
+
+## Phase 7: Retrieval & Editing
+- [ ] View scores per week for each student
+- [ ] View scores per day for each student
+- [ ] Edit saved scores for each criterion
+- [ ] Edit notes per criterion
+- [ ] Edit reflections per day
 - [ ] Ensure recalculations reflect updated weights
 
-## Phase 6: Polishing
-- [ ] Add validation and error handling
-- [ ] Improve GUI layout and usability
-- [ ] Add export/import options (CSV or backup)
+## Phase 8: Polishing
+- [ ] Add validation for user input
+- [ ] Add error handling for invalid data
+- [ ] Improve GUI layout
+- [ ] Improve GUI usability
+- [ ] Add export to CSV option
+- [ ] Add import from CSV option
+- [ ] Add backup and restore functionality

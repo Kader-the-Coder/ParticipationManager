@@ -14,12 +14,12 @@
 - Automatically calculate **Daily Total Score** based on configurable weights.
 - Save all information for the specific day.
 
-### 2. Weeks and Quarters
-- Each day belongs to a **week**.
-- Weeks are automatically numbered relative to the **quarter start date**.
-- Each **quarter** defines where week counting starts.
-- When a new quarter is created, week numbering resets to 1.
-- Calculate **weekly total score** for each student (average of daily totals).
+### 2. Quarters and Weeks
+- Each day belongs to a **quarter**.
+- **Weeks** are **calculated dynamically** based on the quarter’s start date.
+- Week numbering **resets to 1** at the start of each new quarter.
+- Users can **customize week length** and optionally set offsets or start days within a quarter.
+- Calculate **weekly total score** for each student by averaging daily totals **per dynamically generated week**.
 
 ### 3. Retrieval & Editing
 - Select a week to view daily scores for all students.
@@ -53,10 +53,10 @@
 | name       | TEXT    | NOT NULL, UNIQUE          |
 
 ### student_subject
-| Column      | Type    | Notes                                        |
-|-------------|---------|----------------------------------------------|
-| student_id  | INTEGER | FOREIGN KEY → students(id)                  |
-| subject_id  | INTEGER | FOREIGN KEY → subjects(id)                  |
+| Column      | Type                     | Notes                           |
+|-------------|--------------------------|---------------------------------|
+| student_id  | INTEGER                  | FOREIGN KEY → students(id)      |
+| subject_id  | INTEGER                  | FOREIGN KEY → subjects(id)      |
 | PRIMARY KEY | (student_id, subject_id) | ensures no duplicate enrollment |
 
 ### quarters
@@ -66,20 +66,12 @@
 | name       | TEXT    | NOT NULL                  |
 | start_date | DATE    | NOT NULL                  |
 
-### weeks
-| Column       | Type    | Notes                                  |
-|--------------|---------|----------------------------------------|
-| id           | INTEGER | PRIMARY KEY AUTOINCREMENT              |
-| quarter_id   | INTEGER | FOREIGN KEY → quarters(id)             |
-| week_number  | INTEGER | Week number within the quarter         |
-| start_date   | DATE    |                                        |
-
 ### days
-| Column     | Type    | Notes                                  |
-|------------|---------|----------------------------------------|
-| id         | INTEGER | PRIMARY KEY AUTOINCREMENT              |
-| week_id    | INTEGER | FOREIGN KEY → weeks(id)                |
-| date       | DATE    | UNIQUE within a week                   |
+| Column | Type    | Notes                             |
+|--------|---------|-----------------------------------|
+| id     | INTEGER | PRIMARY KEY AUTOINCREMENT         |
+| date   | DATE    | Unique; represents a specific day |
+
 
 ### daily_scores
 | Column        | Type    | Notes                                  |
