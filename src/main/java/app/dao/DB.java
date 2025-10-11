@@ -146,20 +146,21 @@ public class DB {
 
       // quarters
       stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS quarters (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    start_date DATE NOT NULL
-                )
-            """);
+          CREATE TABLE IF NOT EXISTS quarters (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL,
+              start_date TEXT NOT NULL
+          )
+      """);
 
       // days
       stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS days (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    date DATE UNIQUE,
-                )
-            """);
+          CREATE TABLE IF NOT EXISTS days (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              date TEXT UNIQUE
+          )
+      """);
+
 
       // daily_scores
       stmt.executeUpdate("""

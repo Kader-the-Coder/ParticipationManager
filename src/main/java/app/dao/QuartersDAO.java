@@ -25,7 +25,8 @@ public class QuartersDAO {
       while (rs.next()) {
         int id = rs.getInt("id");
         String name = rs.getString("name");
-        LocalDate startDate = rs.getDate("start_date").toLocalDate();
+        String startDateStr = rs.getString("start_date");
+        LocalDate startDate = LocalDate.parse(startDateStr);
         quarters.add(new Quarter(id, name, startDate));
       }
     } catch (SQLException e) {

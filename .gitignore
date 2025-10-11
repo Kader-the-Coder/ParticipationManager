@@ -38,6 +38,7 @@ build/
 target/
 
 # Database files
+data/*
 *.db
 
 # Testing
