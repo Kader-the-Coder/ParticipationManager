@@ -3,10 +3,8 @@ package main.java.app.dao;
 import main.java.app.models.Quarter;
 
 import java.sql.*;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,9 +23,19 @@ public class QuartersDAO {
       while (rs.next()) {
         int id = rs.getInt("id");
         String name = rs.getString("name");
-        String startDateStr = rs.getString("start_date");
-        LocalDate startDate = LocalDate.parse(startDateStr);
-        quarters.add(new Quarter(id, name, startDate));
+
+        // Handle both epoch and ISO string formats safely
+        LocalDate date;
+        try {
+          long millis = rs.getLong("start_date");
+          date = Instant.ofEpochMilli(millis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate();
+        } catch (Exception ignored) {
+          date = LocalDate.parse(rs.getString("start_date"));
+        }
+
+        quarters.add(new Quarter(id, name, date));
       }
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Error fetching quarters", e);
@@ -42,7 +50,10 @@ public class QuartersDAO {
 
     try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, quarter.getName());
-      stmt.setDate(2, Date.valueOf(quarter.getStartDate()));
+      stmt.setLong(2, quarter.getStartDate()
+        .atStartOfDay(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli());
       stmt.executeUpdate();
 
       try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -59,7 +70,10 @@ public class QuartersDAO {
 
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, quarter.getName());
-      stmt.setDate(2, Date.valueOf(quarter.getStartDate()));
+      stmt.setLong(2, quarter.getStartDate()
+        .atStartOfDay(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli());
       stmt.setInt(3, quarter.getId());
       stmt.executeUpdate();
     } catch (SQLException e) {

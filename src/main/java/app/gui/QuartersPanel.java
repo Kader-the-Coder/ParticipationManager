@@ -1,31 +1,20 @@
 package main.java.app.gui;
 
 import main.java.app.dao.QuartersDAO;
-import main.java.app.dao.StudentDAO;
 import main.java.app.models.Quarter;
-import main.java.app.models.Student;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.Arrays;
 
-/**
- * Panel for managing quarters only.
- */
 public class QuartersPanel extends JPanel {
 
-  private final MainFrame mainFrame;
   private final JPanel quartersListPanel;
-  private final int quarterPanelHeight = 50;
 
   public QuartersPanel(MainFrame mainFrame) {
-    this.mainFrame = mainFrame;
     setLayout(new BorderLayout(20, 20));
     setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -35,13 +24,13 @@ public class QuartersPanel extends JPanel {
     header.setHorizontalAlignment(SwingConstants.CENTER);
     add(header, BorderLayout.NORTH);
 
-    // Scrollable list of quarters
+    // Scrollable quarters list
     quartersListPanel = new JPanel();
     quartersListPanel.setLayout(new BoxLayout(quartersListPanel, BoxLayout.Y_AXIS));
     JScrollPane scrollPane = new JScrollPane(quartersListPanel);
     add(scrollPane, BorderLayout.CENTER);
 
-    // Bottom buttons
+    // Bottom panel buttons
     JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     JButton addQuarterBtn = new JButton("➕ Add Quarter");
     JButton backBtn = new JButton("⬅ Back to Menu");
@@ -49,57 +38,51 @@ public class QuartersPanel extends JPanel {
     bottomPanel.add(backBtn);
     add(bottomPanel, BorderLayout.SOUTH);
 
-    // Load existing quarters
+    addQuarterBtn.addActionListener(ignored -> addNewQuarter());
+    backBtn.addActionListener(ignored -> mainFrame.showPanel("menu"));
+
     loadQuarters();
-
-    // Actions
-    addQuarterBtn.addActionListener(e -> addNewQuarter());
-    backBtn.addActionListener(e -> mainFrame.showPanel("menu"));
   }
-
-//  private void loadQuarters() {
-//    quartersListPanel.removeAll();
-//    List<Quarter> quarters = QuartersDAO.getAllQuarters();
-//    for (Quarter q : quarters) {
-//      JLabel label = new JLabel(q.getName() + " (Start: " + q.getStartDate() + ")");
-//      label.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-//      quartersListPanel.add(label);
-//    }
-//    quartersListPanel.revalidate();
-//    quartersListPanel.repaint();
-//  }
 
   private void loadQuarters() {
     quartersListPanel.removeAll();
     List<Quarter> quarters = QuartersDAO.getAllQuarters();
 
-    Function<Quarter, String[]> info = q -> new String[]{
-      q.getName(),
-      q.getStartDate().toString()
-    };
+    Function<Quarter, String[]> info = this::getFieldInfo;
+    Function<Quarter, List<JButton>> buttons = this::getJButtons;
 
-    List<Consumer<Quarter>> actions = Arrays.asList(this::editQuarter, this::deleteQuarter);
-
+    FrameBuilder<Quarter> builder = new FrameBuilder<>(quartersListPanel);
     for (Quarter q : quarters) {
-      JButton editBtn = new JButton("✎");
-      JButton deleteBtn = new JButton("❌");
-      List<JButton> buttons = Arrays.asList(editBtn, deleteBtn);
-
-      ListableFrameBuilder<Quarter> builder = new ListableFrameBuilder<>(quartersListPanel, info, actions);
-      JPanel studentFrame = builder.buildFrame(q, buttons);
-      studentFrame.setMaximumSize(new Dimension(Integer.MAX_VALUE, quarterPanelHeight));
-      quartersListPanel.add(studentFrame);
+      JPanel frame = builder.buildFrame(info.apply(q), buttons.apply(q));
+      frame.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+      quartersListPanel.add(frame);
     }
 
     quartersListPanel.revalidate();
     quartersListPanel.repaint();
   }
 
+  private List<JButton> getJButtons(Quarter q) {
+    RoundButton editBtn = new RoundButton("✎", Color.WHITE);
+    RoundButton deleteBtn = new RoundButton("❌", Color.RED);
+
+    editBtn.addActionListener(ignored -> editQuarter(q));
+    deleteBtn.addActionListener(ignored -> deleteQuarter(q));
+
+    return Arrays.asList(editBtn, deleteBtn);
+  }
+
+  private String[] getFieldInfo(Quarter q) {
+    return new String[]{
+      q.getName(),
+      q.getStartDate().toString()
+    };
+  }
+
   private void addNewQuarter() {
     String name = JOptionPane.showInputDialog(this, "Enter Quarter Name:");
     if (name == null || name.trim().isEmpty()) return;
 
-    // Compute start date: next Monday after last quarter
     LocalDate startDate = QuartersDAO.computeNextQuarterStartDate();
     Quarter newQuarter = new Quarter(name, startDate);
     QuartersDAO.addQuarter(newQuarter);
@@ -108,11 +91,9 @@ public class QuartersPanel extends JPanel {
   }
 
   private void editQuarter(Quarter quarter) {
-    // Edit name
     String newName = JOptionPane.showInputDialog(this, "Edit Quarter Name:", quarter.getName());
     if (newName == null || newName.trim().isEmpty()) return;
 
-    // Edit start date
     LocalDate newStartDate = quarter.getStartDate();
     String dateInput = JOptionPane.showInputDialog(
       this,
@@ -123,19 +104,15 @@ public class QuartersPanel extends JPanel {
 
     try {
       newStartDate = LocalDate.parse(dateInput.trim());
-    } catch (Exception e) {
+    } catch (Exception ignored) {
       JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD.");
       return;
     }
 
-    // Update Quarter object
     quarter.setName(newName);
     quarter.setStartDate(newStartDate);
-
-    // Update in DB
     QuartersDAO.updateQuarter(quarter);
 
-    // Refresh the list
     loadQuarters();
   }
 
@@ -149,8 +126,7 @@ public class QuartersPanel extends JPanel {
 
     if (confirm == JOptionPane.YES_OPTION) {
       QuartersDAO.deleteQuarter(quarter.getId());
-      loadQuarters(); // Refresh the list to reflect deletion
+      loadQuarters();
     }
   }
-
 }

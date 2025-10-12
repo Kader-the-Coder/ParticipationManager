@@ -161,25 +161,25 @@ public class DB {
           )
       """);
 
-
       // daily_scores
       stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS daily_scores (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    student_id INTEGER,
-                    day_id INTEGER,
-                    participation INTEGER,
-                    camera INTEGER,
-                    on_time INTEGER,
-                    behaviour INTEGER,
-                    attendance INTEGER,
-                    daily_total INTEGER,
-                    notes TEXT,
-                    reflections TEXT,
-                    FOREIGN KEY (student_id) REFERENCES students(id),
-                    FOREIGN KEY (day_id) REFERENCES days(id)
-                )
-            """);
+          CREATE TABLE IF NOT EXISTS daily_scores (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              student_id INTEGER NOT NULL,
+              day_id INTEGER NOT NULL,
+              participation INTEGER DEFAULT 0,
+              camera INTEGER DEFAULT 0,
+              on_time INTEGER DEFAULT 0,
+              behaviour INTEGER DEFAULT 0,
+              attendance INTEGER DEFAULT 0,
+              daily_total INTEGER DEFAULT 0,
+              notes TEXT,
+              reflections TEXT,
+              FOREIGN KEY (student_id) REFERENCES students(id),
+              FOREIGN KEY (day_id) REFERENCES days(id),
+              UNIQUE(student_id, day_id)
+          )
+      """);
 
       // criteria_weights
       stmt.executeUpdate("""

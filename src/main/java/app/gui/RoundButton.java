@@ -4,12 +4,19 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RoundButton extends JButton {
-  public RoundButton(String text) {
+  private Color bgColor;
+
+  public RoundButton(String text, Color color) {
     super(text);
+    this.bgColor = color;
     setFocusPainted(false);
-    setContentAreaFilled(false);
     setBorderPainted(false);
-    setOpaque(false);
+    setContentAreaFilled(false);
+  }
+
+  public void setBgColor(Color color) {
+    this.bgColor = color;
+    repaint();
   }
 
   @Override
@@ -18,8 +25,17 @@ public class RoundButton extends JButton {
     Graphics2D g2 = (Graphics2D) g.create();
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-    // Draw circular background
-    g2.setColor(getModel().isPressed() ? Color.LIGHT_GRAY : Color.WHITE);
+    Color fillColor = bgColor != null ? bgColor : Color.WHITE;
+
+    if (getModel().isRollover()) {
+      fillColor = adjustBrightness(fillColor, 0.85f); // darken 15% on hover
+    }
+
+    if (getModel().isPressed()) {
+      fillColor = adjustBrightness(fillColor, 0.7f); // darken 30% on click
+    }
+
+    g2.setColor(fillColor);
     g2.fillOval(0, 0, diameter, diameter);
 
     // Draw border
@@ -27,22 +43,29 @@ public class RoundButton extends JButton {
     g2.drawOval(0, 0, diameter - 1, diameter - 1);
 
     // Draw text manually centered
-    String text = getText();
     FontMetrics fm = g2.getFontMetrics();
-    int textWidth = fm.stringWidth(text);
+    int textWidth = fm.stringWidth(getText());
     int textHeight = fm.getAscent();
     int x = (diameter - textWidth) / 2;
-    int y = (diameter + textHeight) / 2 - 2; // slight adjustment
-    g2.setColor(getForeground());
-    g2.drawString(text, x, y);
+    int y = (diameter + textHeight) / 2 - 2;
+    g2.setColor(Color.BLACK);
+    g2.drawString(getText(), x, y);
 
     g2.dispose();
   }
 
+  // Utility to darken/lighten a color by a factor
+  private Color adjustBrightness(Color color, float factor) {
+    int r = Math.min(255, Math.max(0, (int) (color.getRed() * factor)));
+    int g = Math.min(255, Math.max(0, (int) (color.getGreen() * factor)));
+    int b = Math.min(255, Math.max(0, (int) (color.getBlue() * factor)));
+    return new Color(r, g, b);
+  }
+
+
   @Override
   public Dimension getPreferredSize() {
-    Dimension d = super.getPreferredSize();
-    int s = Math.max(d.width, d.height);
-    return new Dimension(30, 30); // make it square
+    int size = 30;
+    return new Dimension(size, size);
   }
 }

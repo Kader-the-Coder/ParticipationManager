@@ -31,19 +31,19 @@
 - [X] Add “Back to Menu” button/action in each subpanel
 - [X] Reserve space for future sections (e.g. Reports, Analytics)
 
-## Phase 3: Daily Tracking UI
-- [ ] Create main panel for daily tracking
-  - [ ] Add table/grid to display students and their daily scores
-  - [ ] Add columns for Participation, Camera, On Time, Behaviour, Attendance, Daily Total
-  - [ ] Add input fields or editable cells for each criterion per student
-  - [ ] Add a column for Notes per student
-  - [ ] Add a column for Reflections per student
-  - [ ] Implement row selection for editing a student’s daily entry
-  - [ ] Add scroll functionality for large student lists
-  - [ ] Add header with column labels
-  - [ ] Implement dynamic resizing so grid fits window
-  - [ ] Highlight the current day in the grid
-  - [ ] Add buttons for saving or canceling changes
+## Phase 3.1: Daily Tracking UI - Core
+- [X] Create main panel for daily tracking
+  - [X] Add table/grid to display students and their daily scores
+  - [X] Add columns for Participation, Camera, On Time, Behaviour, Attendance, Daily Total
+  - [X] Add buttons to mark each field
+
+## Phase 3.2: Daily Tracking UI - Additional
+- [ ] Add a way to write Notes per student
+- [ ] Add a way to write Reflections per student
+- [ ] Add a way to write Notes per day*
+- [ ] Add a way to write Reflections per day*
+- [ ] Highlight the current day in the grid
+- [ ] Add buttons for saving or canceling changes
 
 ## Phase 4: Daily Tracking Filters
 - [ ] Implement logic to filter out students

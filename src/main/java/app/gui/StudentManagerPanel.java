@@ -1,26 +1,19 @@
 package main.java.app.gui;
 
-import main.java.app.dao.StudentDAO;
-import main.java.app.dao.SubjectDAO;
-import main.java.app.dao.GradeDAO;
+import main.java.app.dao.*;
 import main.java.app.models.Student;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class StudentManagerPanel extends JPanel {
 
   private final JPanel mainPanel;
-  private final JScrollPane scrollPane;
-  private final int studentPanelHeight = 50;
-  private final MainFrame mainFrame;
 
   public StudentManagerPanel(MainFrame mainFrame) {
-    this.mainFrame = mainFrame;
     setLayout(new BorderLayout(20, 20));
     setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -33,7 +26,7 @@ public class StudentManagerPanel extends JPanel {
     // Main scrollable panel
     mainPanel = new JPanel();
     mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-    scrollPane = new JScrollPane(mainPanel);
+    JScrollPane scrollPane = new JScrollPane(mainPanel);
     add(scrollPane, BorderLayout.CENTER);
 
     // Bottom panel with buttons
@@ -51,37 +44,46 @@ public class StudentManagerPanel extends JPanel {
 
     add(bottomPanel, BorderLayout.SOUTH);
 
-    loadStudents();
+    addButton.addActionListener(ignored -> addNewStudent());
+    backButton.addActionListener(ignored -> mainFrame.showPanel("menu"));
 
-    addButton.addActionListener(e -> addNewStudent());
-    backButton.addActionListener(e -> mainFrame.showPanel("menu"));
+    loadStudents();
   }
 
   private void loadStudents() {
     mainPanel.removeAll();
     List<Student> students = StudentDAO.getAllStudents();
 
-    Function<Student, String[]> displayMapper = s -> new String[]{
-      s.getName(),
-      "Grade " + s.getGradeName(),
-      "Subjects: " + String.join(", ", s.getSubjectNames())
-    };
+    Function<Student, String[]> fieldInfo = this::getFieldInfo;
+    Function<Student, List<JButton>> buttonSupplier = this::getJButtons;
 
-    List<Consumer<Student>> actions = Arrays.asList(this::editStudent, this::deleteStudent);
-
+    FrameBuilder<Student> builder = new FrameBuilder<>(mainPanel);
     for (Student s : students) {
-      JButton editBtn = new JButton("✎");
-      JButton deleteBtn = new JButton("❌");
-      List<JButton> buttons = Arrays.asList(editBtn, deleteBtn);
-
-      ListableFrameBuilder<Student> builder = new ListableFrameBuilder<>(mainPanel, displayMapper, actions);
-      JPanel studentFrame = builder.buildFrame(s, buttons);
-      studentFrame.setMaximumSize(new Dimension(Integer.MAX_VALUE, studentPanelHeight));
-      mainPanel.add(studentFrame);
+      JPanel frame = builder.buildFrame(fieldInfo.apply(s), buttonSupplier.apply(s));
+      frame.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+      mainPanel.add(frame);
     }
 
     mainPanel.revalidate();
     mainPanel.repaint();
+  }
+
+  private List<JButton> getJButtons(Student s) {
+    RoundButton editBtn = new RoundButton("✎", Color.WHITE);
+    RoundButton deleteBtn = new RoundButton("❌", Color.RED);
+
+    editBtn.addActionListener(ignored -> editStudent(s));
+    deleteBtn.addActionListener(ignored -> deleteStudent(s));
+
+    return Arrays.asList(editBtn, deleteBtn);
+  }
+
+  private String[] getFieldInfo(Student s) {
+    return new String[]{
+      s.getName(),
+      "Grade " + s.getGradeName(),
+      "Subjects: " + String.join(", ", s.getSubjectNames())
+    };
   }
 
   private void addNewStudent() {
@@ -106,7 +108,8 @@ public class StudentManagerPanel extends JPanel {
 
     List<String> selectedSubjects = subjectList.getSelectedValuesList();
     List<Integer> subjectIds = new ArrayList<>();
-    for (String subjName : selectedSubjects) subjectIds.add(SubjectDAO.getSubjectId(subjName));
+    for (String subjName : selectedSubjects)
+      subjectIds.add(SubjectDAO.getSubjectId(subjName));
 
     Student newStudent = new Student(name, gradeId, subjectIds);
     StudentDAO.addStudent(newStudent);
@@ -143,7 +146,8 @@ public class StudentManagerPanel extends JPanel {
 
     List<String> newSubjects = subjectList.getSelectedValuesList();
     List<Integer> newSubjectIds = new ArrayList<>();
-    for (String subjName : newSubjects) newSubjectIds.add(SubjectDAO.getSubjectId(subjName));
+    for (String subjName : newSubjects)
+      newSubjectIds.add(SubjectDAO.getSubjectId(subjName));
 
     student.setName(newName);
     student.setGradeId(newGradeId);

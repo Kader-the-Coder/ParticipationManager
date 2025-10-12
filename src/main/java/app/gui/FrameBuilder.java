@@ -3,25 +3,16 @@ package main.java.app.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Consumer;
 
 /**
  * Generic builder for creating listable frames for any data model.
  */
-public class ListableFrameBuilder<T> {
+public class FrameBuilder<T> {
 
-  private final JPanel containerPanel;
-  private final Function<T, String[]> displayMapper;  // Maps model to array of display strings
-  private final List<Consumer<T>> buttonActions;      // Actions for buttons
-
-  public ListableFrameBuilder(JPanel containerPanel, Function<T, String[]> displayMapper, List<Consumer<T>> buttonActions) {
-    this.containerPanel = containerPanel;
-    this.displayMapper = displayMapper;
-    this.buttonActions = buttonActions;
+  public FrameBuilder(JPanel container) {
   }
 
-  public JPanel buildFrame(T model, List<JButton> buttons) {
+  public JPanel buildFrame(String[] info, List<JButton> buttons) {
     JPanel frame = new JPanel(new BorderLayout());
     frame.setBorder(BorderFactory.createCompoundBorder(
       BorderFactory.createLineBorder(Color.GRAY),
@@ -49,22 +40,12 @@ public class ListableFrameBuilder<T> {
     c.gridheight = 1;
     c.weightx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
-
-    String[] infoStrings = displayMapper.apply(model);
     JPanel infoColumn = new JPanel();
     infoColumn.setLayout(new BoxLayout(infoColumn, BoxLayout.X_AXIS));
-    String combined = String.join(" | ", infoStrings);
+    String combined = String.join(" | ", info);
     infoColumn.add(new JLabel(combined));
-
     infoPanel.add(infoColumn, c);
     frame.add(infoPanel, BorderLayout.CENTER);
-
-    // Assign actions to buttons
-    for (int i = 0; i < buttons.size(); i++) {
-      JButton button = buttons.get(i);
-      Consumer<T> action = buttonActions.get(i);
-      button.addActionListener(e -> action.accept(model));
-    }
 
     return frame;
   }
