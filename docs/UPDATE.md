@@ -38,9 +38,8 @@
   - [X] Add buttons to mark each field
 
 ## Phase 3.2: Daily Tracking UI - Additional
-- [ ] Allow for determining the day
-- [ ] Allow for removing a all data in a given day
-- [ ] Add buttons for saving or canceling changes
+- [X] Allow for determining the day
+- [X] Allow for removing a all data in a given day
 
 ## Phase 4.1: Daily Tracking Filters
 - [ ] Implement logic to filter out students

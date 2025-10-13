@@ -117,4 +117,17 @@ public class DailyScoresDAO {
       LOGGER.log(Level.SEVERE, "Error deleting daily score", e);
     }
   }
+
+  public static void deleteScoresForDay(int dayId) {
+    String sql = "DELETE FROM daily_scores WHERE day_id = ?";
+    Connection conn = DB.getConnection();
+
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      stmt.setInt(1, dayId);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error deleting all scores for day", e);
+    }
+  }
+
 }
