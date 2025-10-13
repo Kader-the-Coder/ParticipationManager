@@ -38,14 +38,11 @@
   - [X] Add buttons to mark each field
 
 ## Phase 3.2: Daily Tracking UI - Additional
-- [ ] Add a way to write Notes per student
-- [ ] Add a way to write Reflections per student
-- [ ] Add a way to write Notes per day*
-- [ ] Add a way to write Reflections per day*
-- [ ] Highlight the current day in the grid
+- [ ] Allow for determining the day
+- [ ] Allow for removing a all data in a given day
 - [ ] Add buttons for saving or canceling changes
 
-## Phase 4: Daily Tracking Filters
+## Phase 4.1: Daily Tracking Filters
 - [ ] Implement logic to filter out students
   - [ ] Implement filter to select student by quarter
     - [ ] Display available quarters in a dropdown or list
@@ -56,6 +53,12 @@
   - [ ] Update GUI to reflect filtered student list in real-time
   - [ ] Persist selected filters between sessions
   - [ ] Validate filter inputs and handle edge cases (e.g., no data for selected week)
+
+## Phase 4.2: Daily Tracking UI - Non-functional
+- [ ] Add a way to write Notes per student*
+- [ ] Add a way to write Reflections per student*
+- [ ] Add a way to write Notes per day*
+- [ ] Add a way to write Reflections per day*
 
 ## Phase 5: Daily Tracking Logic
 - [ ] Implement saving of daily scores per student (linked to `days`)
