@@ -17,7 +17,7 @@ public class GradeDAO {
    */
   public static List<String> getAllGradeNames() {
     List<String> names = new ArrayList<>();
-    String sql = "SELECT name FROM grades ORDER BY name ASC";
+    String sql = "SELECT name FROM grades";
 
     Connection conn = DB.getConnection();
     try (Statement stmt = conn.createStatement();
@@ -25,9 +25,12 @@ public class GradeDAO {
       while (rs.next()) {
         names.add(rs.getString("name"));
       }
+      // Sort numerically
+      names.sort(Comparator.comparingInt(Integer::parseInt));
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to get all grade names", e);
     }
+
 
     return names;
   }

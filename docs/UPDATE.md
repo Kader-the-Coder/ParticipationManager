@@ -42,16 +42,8 @@
 - [X] Allow for removing a all data in a given day
 
 ## Phase 4.1: Daily Tracking Filters
-- [ ] Implement logic to filter out students
-  - [ ] Implement filter to select student by quarter
-    - [ ] Display available quarters in a dropdown or list
-  - [ ] Implement filter to select student by week
-    - [ ] Display weeks dynamically based on selected quarter
-  - [ ] Ensure filtering by quarter updates the week options
-  - [ ] Combine filters so multiple criteria can be applied simultaneously
-  - [ ] Update GUI to reflect filtered student list in real-time
-  - [ ] Persist selected filters between sessions
-  - [ ] Validate filter inputs and handle edge cases (e.g., no data for selected week)
+- [X] Implement logic to filter out students by grade and subject
+- [ ] Persist selected filters between sessions
 
 ## Phase 4.2: Daily Tracking UI - Non-functional
 - [ ] Add a way to write Notes per student*

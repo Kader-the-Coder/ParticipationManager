@@ -16,7 +16,7 @@ public class QuartersPanel extends JPanel {
 
   public QuartersPanel(MainFrame mainFrame) {
     setLayout(new BorderLayout(20, 20));
-    setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     // Header
     JLabel header = new JLabel("Manage Quarters");

@@ -164,4 +164,33 @@ public class SubjectDAO {
     }
     return -1;
   }
+
+  public static List<String> getAllSubjectNames() {
+    List<String> names = new ArrayList<>();
+    String sql = "SELECT name FROM subjects ORDER BY name ASC";
+
+    Connection conn = DB.getConnection();
+    try (Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+      while (rs.next()) names.add(rs.getString("name"));
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Failed to get all subject names", e);
+    }
+    return names;
+  }
+
+  public static int getSubjectIdByName(String name) {
+    String sql = "SELECT id FROM subjects WHERE name = ?";
+    Connection conn = DB.getConnection();
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      stmt.setString(1, name);
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) return rs.getInt("id");
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Failed to get subject ID for name: " + name, e);
+    }
+    return -1;
+  }
+
 }

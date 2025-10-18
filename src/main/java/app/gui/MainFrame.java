@@ -19,6 +19,7 @@ public class MainFrame extends JFrame {
     setTitle("ParticipationManager");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setAlwaysOnTop(true);
+    setMinimumSize(new Dimension(300, 400));
 
     int width = Integer.parseInt(SettingsDAO.loadSetting("window_width", "800"));
     int height = Integer.parseInt(SettingsDAO.loadSetting("window_height", "600"));

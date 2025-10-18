@@ -90,6 +90,37 @@ public class StudentDAO {
     return null;
   }
 
+  public static List<Student> getFilteredStudents(Integer gradeId, Integer subjectId) {
+    List<Student> students = new ArrayList<>();
+    StringBuilder sql = new StringBuilder("""
+    SELECT s.* FROM students s
+    LEFT JOIN student_subject ss ON s.id = ss.student_id
+    WHERE 1=1
+  """);
+
+    if (gradeId != null) sql.append(" AND s.grade_id = ").append(gradeId);
+    if (subjectId != null) sql.append(" AND ss.subject_id = ").append(subjectId);
+    sql.append(" GROUP BY s.id ORDER BY s.name ASC");
+
+    Connection conn = DB.getConnection();
+    try (Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql.toString())) {
+      while (rs.next()) {
+        int id = rs.getInt("id");
+        List<Integer> subjectIds = getSubjectsForStudent(id);
+        students.add(new Student(
+          id,
+          rs.getString("name"),
+          rs.getInt("grade_id"),
+          subjectIds
+        ));
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error filtering students", e);
+    }
+    return students;
+  }
+
   /**
    * Updates a student and all associated subjects.
    */
