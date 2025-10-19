@@ -16,7 +16,7 @@ public class SettingsDAO {
   public static void saveSetting(String key, String value) {
     String sql = "INSERT INTO settings(key, value) VALUES(?, ?) " +
       "ON CONFLICT(key) DO UPDATE SET value=excluded.value";
-    Connection conn = DB.getConnection();
+    Connection conn = DB.getConnection(); // keep connection open
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
       ps.setString(1, key);
       ps.setString(2, value);
@@ -32,16 +32,13 @@ public class SettingsDAO {
   public static String loadSetting(String key, String defaultValue) {
     String sql = "SELECT value FROM settings WHERE key = ?";
     Connection conn = DB.getConnection();
-    try (PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
       ps.setString(1, key);
-      try (ResultSet result = ps.executeQuery()) {
-        if (result.next()) {
-          return result.getString("value");
+      try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getString("value");
         }
       }
-
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Error loading setting: " + key, e);
     }

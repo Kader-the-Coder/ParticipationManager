@@ -43,7 +43,7 @@
 
 ## Phase 4.1: Daily Tracking Filters
 - [X] Implement logic to filter out students by grade and subject
-- [ ] Persist selected filters between sessions
+- [X] Persist selected filters between sessions
 
 ## Phase 4.2: Daily Tracking UI - Non-functional
 - [ ] Add a way to write Notes per student*

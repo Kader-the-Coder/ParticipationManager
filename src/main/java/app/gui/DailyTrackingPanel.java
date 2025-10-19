@@ -62,6 +62,12 @@ public class DailyTrackingPanel extends JPanel {
     subjectFilter.addItem(allSubjects);
     for (String s : SubjectDAO.getAllSubjectNames()) subjectFilter.addItem(s);
 
+    // Restore last selected filters
+    String lastGrade = SettingsDAO.loadSetting("last_grade_filter", allGrades);
+    String lastSubject = SettingsDAO.loadSetting("last_subject_filter", allSubjects);
+    gradeFilter.setSelectedItem(lastGrade);
+    subjectFilter.setSelectedItem(lastSubject);
+
     filterPanel.add(gradeFilter);
     filterPanel.add(subjectFilter);
 
@@ -110,8 +116,15 @@ public class DailyTrackingPanel extends JPanel {
       datePicker.setDate(java.util.Date.from(selectedDay[0].atStartOfDay(ZoneId.systemDefault()).toInstant()));
     });
 
-    gradeFilter.addActionListener(e -> loadStudents());
-    subjectFilter.addActionListener(e -> loadStudents());
+    gradeFilter.addActionListener(e -> {
+      loadStudents();
+      SettingsDAO.saveSetting("last_grade_filter", (String) gradeFilter.getSelectedItem());
+    });
+
+    subjectFilter.addActionListener(e -> {
+      loadStudents();
+      SettingsDAO.saveSetting("last_subject_filter", (String) subjectFilter.getSelectedItem());
+    });
   }
 
   private JPanel getBottomPanel(MainFrame mainFrame) {
