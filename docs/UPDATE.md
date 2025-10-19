@@ -41,31 +41,20 @@
 - [X] Allow for determining the day
 - [X] Allow for removing a all data in a given day
 
-## Phase 4.1: Daily Tracking Filters
+## Phase 4: Daily Tracking Filters
 - [X] Implement logic to filter out students by grade and subject
 - [X] Persist selected filters between sessions
 
-## Phase 4.2: Daily Tracking UI - Non-functional
-- [ ] Add a way to write Notes per student*
-- [ ] Add a way to write Reflections per student*
-- [ ] Add a way to write Notes per day*
-- [ ] Add a way to write Reflections per day*
-
 ## Phase 5: Daily Tracking Logic
-- [ ] Implement saving of daily scores per student (linked to `days`)
+- [X] Implement saving of daily scores per student (linked to `days`)
 - [ ] Implement changeable participation weight
 - [ ] Implement changeable camera weight
 - [ ] Implement changeable on-time weight
 - [ ] Implement changeable behaviour weight
 - [ ] Implement changeable attendance weight
-- [ ] Implement GUI grid for entering Participation
-- [ ] Implement GUI grid for entering Camera
-- [ ] Implement GUI grid for entering On Time
-- [ ] Implement GUI grid for entering Behaviour
-- [ ] Implement GUI grid for entering Attendance
+- [ ] Implement logic to ensure changed weights only apply to later dates
+- [ ] Implement logic to allow custom application of weights for a given date
 - [ ] Implement auto-calculation of Daily Total
-- [ ] Implement notes per criterion
-- [ ] Implement reflections per day
 
 ## Phase 6: Quarters & Filters
 - [X] Implement CRUD for quarters (used as filters; start dates are saved)
@@ -80,11 +69,20 @@
 - [ ] Edit reflections per day
 - [ ] Ensure recalculations reflect updated weights
 
-## Phase 8: Polishing
+## Phase 8: Daily Tracking UI - Non-functional
+- [ ] Add a way to write Notes per student
+- [ ] Add a way to write Reflections per student
+- [ ] Add a way to write Notes per day
+- [ ] Add a way to write Reflections per day
+- [ ] Implement notes per criterion
+- [ ] Implement reflections per day
+
+## Phase 9: Polishing
 - [ ] Add validation for user input
 - [ ] Add error handling for invalid data
 - [ ] Improve GUI layout
 - [ ] Improve GUI usability
+- [ ] Ensure consistency across GUI elements
 - [ ] Add export to CSV option
 - [ ] Add import from CSV option
 - [ ] Add backup and restore functionality
