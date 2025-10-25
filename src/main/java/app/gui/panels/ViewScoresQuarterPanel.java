@@ -1,6 +1,9 @@
-package main.java.app.gui;
+package main.java.app.gui.panels;
 
 import main.java.app.dao.QuartersDAO;
+import main.java.app.gui.components.RoundButton;
+import main.java.app.gui.frames.MainFrame;
+import main.java.app.gui.templates.PanelTemplate;
 import main.java.app.models.Quarter;
 
 import javax.swing.*;
@@ -8,34 +11,23 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Function;
 
-public class ViewScoresQuarterPanel extends JPanel {
+public class ViewScoresQuarterPanel extends BasePanel {
 
   private final JPanel mainPanel;
-  private final MainFrame mainFrame;
 
   public ViewScoresQuarterPanel(MainFrame mainFrame) {
-    this.mainFrame = mainFrame;
+    super(mainFrame);
 
-    setLayout(new BorderLayout(20, 20));
-    setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    // Header
+    JLabel headerLabel = new JLabel("View Scores");
+    headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    setHeaderComponent(headerLabel);
 
-    JLabel titleLabel = new JLabel("View Scores");
-    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-    titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    add(titleLabel, BorderLayout.NORTH);
-
+    // Main scrollable panel
     mainPanel = new JPanel();
     mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-    JScrollPane scrollPane = new JScrollPane(mainPanel);
-    add(scrollPane, BorderLayout.CENTER);
-
-    JPanel bottomPanel = new JPanel(new BorderLayout());
-    JButton backButton = new JButton("⬅ Back to Menu");
-    backButton.addActionListener(e -> mainFrame.showPanel("menu"));
-    JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    backButtonPanel.add(backButton);
-    bottomPanel.add(backButtonPanel, BorderLayout.SOUTH);
-    add(bottomPanel, BorderLayout.SOUTH);
+    setBodyComponent(mainPanel);
 
     loadQuarters();
   }
@@ -47,7 +39,7 @@ public class ViewScoresQuarterPanel extends JPanel {
     Function<Quarter, String[]> fieldInfo = this::getFieldInfo;
     Function<Quarter, java.util.List<JButton>> buttonSupplier = this::getJButtons;
 
-    FrameBuilder<Quarter> builder = new FrameBuilder<>(mainPanel);
+    PanelTemplate<Quarter> builder = new PanelTemplate<>(mainPanel);
     for (Quarter q : quarters) {
       JPanel frame = builder.buildFrame(fieldInfo.apply(q), buttonSupplier.apply(q));
       frame.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
@@ -79,8 +71,8 @@ public class ViewScoresQuarterPanel extends JPanel {
     RoundButton viewBtn = new RoundButton("🔍", Color.WHITE);
     viewBtn.addActionListener(e -> {
       // Create new weeks panel dynamically
-      ViewScoresWeeksPanel weeksPanel = new ViewScoresWeeksPanel(mainFrame, q);
-      mainFrame.showPanel(weeksPanel, "weeks_" + q.getId());
+      ViewScoresWeeksPanel weeksPanel = new ViewScoresWeeksPanel(super.mainFrame, q);
+      super.mainFrame.showPanel(weeksPanel);
     });
     return java.util.List.of(viewBtn);
   }

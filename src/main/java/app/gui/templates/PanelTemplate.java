@@ -1,4 +1,6 @@
-package main.java.app.gui;
+package main.java.app.gui.templates;
+
+import main.java.app.gui.components.RoundButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,9 +8,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
 
-public class FrameBuilder<T> {
+public class PanelTemplate<T> {
 
-  public FrameBuilder(JPanel container) {}
+  public PanelTemplate(JPanel container) {}
 
   public JPanel buildFrame(String[] info, List<JButton> buttons) {
     JPanel frame = new JPanel(new BorderLayout());

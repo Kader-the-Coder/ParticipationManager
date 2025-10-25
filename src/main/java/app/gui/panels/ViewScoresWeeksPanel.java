@@ -1,8 +1,11 @@
-package main.java.app.gui;
+package main.java.app.gui.panels;
 
 import main.java.app.dao.DailyScoresDAO;
 import main.java.app.dao.DaysDAO;
 import main.java.app.dao.QuartersDAO;
+import main.java.app.gui.components.RoundButton;
+import main.java.app.gui.frames.MainFrame;
+import main.java.app.gui.templates.PanelTemplate;
 import main.java.app.models.Quarter;
 
 import javax.swing.*;
@@ -11,39 +14,30 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
 
-public class ViewScoresWeeksPanel extends JPanel {
+public class ViewScoresWeeksPanel extends BasePanel {
 
   private final JPanel mainPanel;
+  private final Quarter quarter;
 
   public ViewScoresWeeksPanel(MainFrame mainFrame, Quarter quarter) {
-    setLayout(new BorderLayout(20, 20));
-    setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    super(mainFrame);
+    this.quarter = quarter;
 
     // Header
-    JLabel titleLabel = new JLabel("Weeks of Quarter starting " + quarter.getStartDate());
-    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-    titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    add(titleLabel, BorderLayout.NORTH);
+    JLabel headerLabel = new JLabel("Weeks of Quarter starting " + quarter.getStartDate());
+    headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    setHeaderComponent(headerLabel);
 
     // Main scrollable panel
     mainPanel = new JPanel();
     mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-    JScrollPane scrollPane = new JScrollPane(mainPanel);
-    add(scrollPane, BorderLayout.CENTER);
+    setBodyComponent(mainPanel);
 
-    // Bottom panel with back button
-    JPanel bottomPanel = new JPanel(new BorderLayout());
-    JButton backButton = new JButton("⬅ Back to Quarters");
-    backButton.addActionListener(e -> mainFrame.showPanel("scores"));
-    JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    backButtonPanel.add(backButton);
-    bottomPanel.add(backButtonPanel, BorderLayout.SOUTH);
-    add(bottomPanel, BorderLayout.SOUTH);
-
-    loadWeeks(quarter, mainFrame);
+    loadWeeks();
   }
 
-  private void loadWeeks(Quarter quarter, MainFrame mainFrame) {
+  private void loadWeeks() {
     mainPanel.removeAll();
 
     // Determine quarter end date
@@ -84,7 +78,7 @@ public class ViewScoresWeeksPanel extends JPanel {
       return java.util.List.of(btn);
     };
 
-    FrameBuilder<Integer> builder = new FrameBuilder<>(mainPanel);
+    PanelTemplate<Integer> builder = new PanelTemplate<>(mainPanel);
     for (int i = 1; i <= totalWeeks; i++) {
       JPanel frame = builder.buildFrame(fieldInfo.apply(i), buttonsSupplier.apply(i));
       frame.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));

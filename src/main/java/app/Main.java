@@ -1,7 +1,7 @@
 package main.java.app;
 
 import main.java.app.dao.DB;
-import main.java.app.gui.MainFrame;
+import main.java.app.gui.frames.MainFrame;
 
 import javax.swing.SwingUtilities;
 

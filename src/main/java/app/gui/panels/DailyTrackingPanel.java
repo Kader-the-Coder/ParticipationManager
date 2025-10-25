@@ -1,8 +1,12 @@
-package main.java.app.gui;
+package main.java.app.gui.panels;
 
 import main.java.app.dao.*;
+import main.java.app.gui.components.RoundButton;
+import main.java.app.gui.frames.MainFrame;
+import main.java.app.gui.templates.PanelTemplate;
 import main.java.app.models.DailyScore;
 import main.java.app.models.Student;
+import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,20 +14,17 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
-import com.toedter.calendar.JDateChooser;
 
-public class DailyTrackingPanel extends JPanel {
+public class DailyTrackingPanel extends BasePanel {
 
-  private final JPanel mainPanel;
   private final JComboBox<String> gradeFilter;
   private final JComboBox<String> subjectFilter;
   private int dayID;
-  final private String allGrades = "XX";
-  final private String allSubjects = "XXXXX";
+  private final String allGrades = "XX";
+  private final String allSubjects = "XXXXX";
 
   public DailyTrackingPanel(MainFrame mainFrame) {
-    setLayout(new BorderLayout(10, 10));
-    setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // reduced padding
+    super(mainFrame);
 
     // Top wrapper
     JPanel topWrapper = new JPanel();
@@ -45,9 +46,7 @@ public class DailyTrackingPanel extends JPanel {
     editor.setHorizontalAlignment(SwingConstants.CENTER);
     editor.setEditable(false);
 
-    //datePanel.add(prevDayButton);
     datePanel.add(datePicker);
-    //datePanel.add(nextDayButton);
 
     // Right: Filters
     JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 2, 0));
@@ -62,7 +61,6 @@ public class DailyTrackingPanel extends JPanel {
     subjectFilter.addItem(allSubjects);
     for (String s : SubjectDAO.getAllSubjectNames()) subjectFilter.addItem(s);
 
-    // Restore last selected filters
     String lastGrade = SettingsDAO.loadSetting("last_grade_filter", allGrades);
     String lastSubject = SettingsDAO.loadSetting("last_subject_filter", allSubjects);
     gradeFilter.setSelectedItem(lastGrade);
@@ -75,18 +73,28 @@ public class DailyTrackingPanel extends JPanel {
     topBar.add(filterPanel, BorderLayout.EAST);
 
     topWrapper.add(topBar);
+    setHeaderComponent(topWrapper);
 
-    add(topWrapper, BorderLayout.NORTH);
+    // Main panel
+    JPanel mainContent = new JPanel();
+    mainContent.setLayout(new BoxLayout(mainContent, BoxLayout.Y_AXIS));
+    setBodyComponent(mainContent);
 
-    // Main area
-    mainPanel = new JPanel();
-    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-    JScrollPane scrollPane = new JScrollPane(mainPanel);
-    add(scrollPane, BorderLayout.CENTER);
-
-    // Bottom panel
-    JPanel bottomPanel = getBottomPanel(mainFrame);
-    add(bottomPanel, BorderLayout.SOUTH);
+    // Add extra buttons in footer (right side)
+    JButton clearDayButton = new JButton("Clear Day");
+    clearDayButton.addActionListener(e -> {
+      int confirm = JOptionPane.showConfirmDialog(
+        this,
+        "Are you sure you want to delete all data for this day?",
+        "Confirm Delete",
+        JOptionPane.YES_NO_OPTION
+      );
+      if (confirm == JOptionPane.YES_OPTION) {
+        DailyScoresDAO.deleteScoresForDay(dayID);
+        loadStudents();
+      }
+    });
+    addFooterButton(clearDayButton);
 
     // Day handling
     LocalDate[] selectedDay = {LocalDate.now()};
@@ -127,60 +135,13 @@ public class DailyTrackingPanel extends JPanel {
     });
   }
 
-  private JPanel getBottomPanel(MainFrame mainFrame) {
-    JPanel bottomPanel = new JPanel();
-    bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-    bottomPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-    JButton backButton = new JButton("⬅ Back to Menu");
-    backButton.addActionListener(ignored -> mainFrame.showPanel("menu"));
-
-    JButton clearDayButton = new JButton("Clear Day");
-    clearDayButton.addActionListener(ignored -> {
-      int confirm = JOptionPane.showConfirmDialog(
-        this,
-        "Are you sure you want to delete all data for this day?",
-        "Confirm Delete",
-        JOptionPane.YES_NO_OPTION
-      );
-      if (confirm == JOptionPane.YES_OPTION) {
-        DailyScoresDAO.deleteScoresForDay(dayID);
-        loadStudents();
-      }
-    });
-
-    // Compact buttons
-    Dimension buttonSize = new Dimension(backButton.getPreferredSize().width, 20);
-    backButton.setPreferredSize(buttonSize);
-    backButton.setMaximumSize(buttonSize);
-    backButton.setMinimumSize(buttonSize);
-
-    buttonSize = new Dimension(clearDayButton.getPreferredSize().width, 20);
-    clearDayButton.setPreferredSize(buttonSize);
-    clearDayButton.setMaximumSize(buttonSize);
-    clearDayButton.setMinimumSize(buttonSize);
-
-    backButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-    clearDayButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-
-    bottomPanel.add(Box.createHorizontalGlue());
-    bottomPanel.add(backButton);
-    bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-    bottomPanel.add(clearDayButton);
-    bottomPanel.add(Box.createHorizontalGlue());
-
-    bottomPanel.setPreferredSize(new Dimension(bottomPanel.getPreferredSize().width, 24));
-    bottomPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
-
-    return bottomPanel;
-  }
-
   private void loadDayData(LocalDate day) {
     dayID = DaysDAO.getOrCreateDay(day);
     loadStudents();
   }
 
   private void loadStudents() {
+    JPanel mainPanel = (JPanel) bodyScrollPane.getViewport().getView();
     mainPanel.removeAll();
 
     String selectedGrade = (String) gradeFilter.getSelectedItem();
@@ -200,7 +161,7 @@ public class DailyTrackingPanel extends JPanel {
       DailyScore score = DailyScoresDAO.getScore(s.getId(), dayID);
       List<JButton> buttons = getJButtons(s, score);
 
-      FrameBuilder<Student> builder = new FrameBuilder<>(mainPanel);
+      PanelTemplate<Student> builder = new PanelTemplate<>(mainPanel);
       JPanel studentFrame = builder.buildFrame(getFieldInfo(s), buttons);
       studentFrame.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
       mainPanel.add(studentFrame);
@@ -225,7 +186,7 @@ public class DailyTrackingPanel extends JPanel {
       String property = data[1];
 
       RoundButton button = new RoundButton(label, getColor(score, property));
-      button.addActionListener(ignored -> {
+      button.addActionListener(e -> {
         DailyScore updatedScore = toggleProperty(s, property);
         button.setBgColor(getColor(updatedScore, property));
       });
