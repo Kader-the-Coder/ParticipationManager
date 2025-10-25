@@ -2,6 +2,7 @@ package main.java.app.dao;
 
 import main.java.app.models.DailyScore;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.*;
 
@@ -129,5 +130,64 @@ public class DailyScoresDAO {
       LOGGER.log(Level.SEVERE, "Error deleting all scores for day", e);
     }
   }
+
+  public static Integer getLastDayIdForQuarter(int quarterId) {
+    String sql = """
+        SELECT MAX(ds.day_id) AS last_day_id
+        FROM daily_scores ds
+        JOIN days d ON ds.day_id = d.id
+        WHERE d.quarter_id = ?
+    """;
+
+    Connection conn = DB.getConnection();
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      stmt.setInt(1, quarterId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+          int lastDayId = rs.getInt("last_day_id");
+          if (!rs.wasNull()) {
+            return lastDayId;
+          }
+        }
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error fetching last day id for quarter " + quarterId, e);
+    }
+
+    // No daily scores found for this quarter
+    return null;
+  }
+
+  public static Double getAverageScoreForWeek(LocalDate quarterStart, int weekNumber) {
+    // Compute start and end dates for the week
+    LocalDate weekStart = quarterStart.plusWeeks(weekNumber - 1);
+    LocalDate weekEnd = weekStart.plusDays(6);
+
+    String sql = """
+        SELECT AVG(daily_total) AS avg_score
+        FROM daily_scores ds
+        JOIN days d ON ds.day_id = d.id
+        WHERE d.date BETWEEN ? AND ?
+    """;
+
+    Connection conn = DB.getConnection();
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      stmt.setString(1, weekStart.toString());
+      stmt.setString(2, weekEnd.toString());
+
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+          double avg = rs.getDouble("avg_score");
+          if (!rs.wasNull()) return avg;
+        }
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error calculating average score for week " + weekNumber
+        + " starting " + weekStart, e);
+    }
+
+    return null; // no scores recorded for this week
+  }
+
 
 }

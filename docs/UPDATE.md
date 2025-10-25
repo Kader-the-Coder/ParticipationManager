@@ -46,9 +46,9 @@
 - [X] Persist selected filters between sessions
 
 ## Phase 5.1: View weekly scores
-- [ ] Create new button in main panel for viewing scores
-- [ ] When selecting view scores -> select quarter
-- [ ] When selecting a quarter -> select week
+- [X] Create new button in main panel for viewing scores
+- [X] When selecting view scores -> select quarter
+- [X] When selecting a quarter -> select week
 - [ ] When selecting a week -> display weekly scores of all students
   - [ ] Make scores filterable by grade and subject
   - [ ] Include button to go to a specific day in that week 

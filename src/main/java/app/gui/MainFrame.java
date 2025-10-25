@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainFrame extends JFrame {
 
@@ -14,6 +16,9 @@ public class MainFrame extends JFrame {
 
   private int selectedQuarterId;
   private int selectedWeekId;
+
+  // Map to store dynamic panels by name
+  private final Map<String, JPanel> panels = new HashMap<>();
 
   public MainFrame() {
     setTitle("ParticipationManager");
@@ -35,19 +40,13 @@ public class MainFrame extends JFrame {
     cardLayout = new CardLayout();
     cardPanel = new JPanel(cardLayout);
 
-    MainMenuPanel menuPanel = new MainMenuPanel(this);
-    StudentManagerPanel studentPanel = new StudentManagerPanel(this);
-    QuartersPanel quartersPanel = new QuartersPanel(this);
-    DailyTrackingPanel dailyPanel = new DailyTrackingPanel(this);
-    ViewWeeklyScoresPanel scoresPanel = new ViewWeeklyScoresPanel(this);
-    // SettingsPanel settingsPanel = new SettingsPanel(this);
-
-    cardPanel.add(menuPanel, "menu");
-    cardPanel.add(dailyPanel, "daily");
-    cardPanel.add(studentPanel, "students");
-    cardPanel.add(quartersPanel, "quarters");
-    cardPanel.add(scoresPanel, "scores");
-    // cardPanel.add(settingsPanel, "settings");
+    // Initialize default panels
+    addPanel("menu", new MainMenuPanel(this));
+    addPanel("students", new StudentManagerPanel(this));
+    addPanel("quarters", new QuartersPanel(this));
+    addPanel("daily", new DailyTrackingPanel(this));
+    addPanel("scores", new ViewScoresQuarterPanel(this));
+    // addPanel("settings", new SettingsPanel(this));
 
     setContentPane(cardPanel);
     showPanel("menu");
@@ -60,8 +59,37 @@ public class MainFrame extends JFrame {
     });
   }
 
+  /** Show a panel by name (legacy support) */
   public void showPanel(String name) {
+    if (!panels.containsKey(name)) {
+      throw new IllegalArgumentException("Panel not found: " + name);
+    }
     cardLayout.show(cardPanel, name);
+  }
+
+  /** Show a panel directly by JPanel object */
+  public void showPanel(JPanel panel) {
+    if (!panels.containsValue(panel)) {
+      // Assign a dynamic key for the panel
+      String key = "dynamic_" + panels.size();
+      panels.put(key, panel);
+      cardPanel.add(panel, key);
+    }
+    cardLayout.show(cardPanel, getKeyForPanel(panel));
+  }
+
+  /** Register a panel with a name */
+  public void addPanel(String name, JPanel panel) {
+    panels.put(name, panel);
+    cardPanel.add(panel, name);
+  }
+
+  private String getKeyForPanel(JPanel panel) {
+    return panels.entrySet().stream()
+      .filter(entry -> entry.getValue() == panel)
+      .map(Map.Entry::getKey)
+      .findFirst()
+      .orElseThrow(() -> new IllegalArgumentException("Panel not registered"));
   }
 
   public int getSelectedQuarterId() {

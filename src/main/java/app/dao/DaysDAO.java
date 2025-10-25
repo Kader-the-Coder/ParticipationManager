@@ -50,4 +50,28 @@ public class DaysDAO {
     if (id != -1) return id;
     return createDay(date);
   }
+
+  public static LocalDate getDateForDayId(Integer dayId) {
+    if (dayId == null) return null;
+
+    String sql = "SELECT date FROM days WHERE id = ?";
+    Connection conn = DB.getConnection();
+
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      stmt.setInt(1, dayId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+          String dateStr = rs.getString("date");
+          if (dateStr != null) {
+            return LocalDate.parse(dateStr);
+          }
+        }
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error fetching date for day ID: " + dayId, e);
+    }
+
+    return null; // If not found or error occurs
+  }
+
 }
