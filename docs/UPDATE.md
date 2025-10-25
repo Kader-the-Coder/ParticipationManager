@@ -45,7 +45,15 @@
 - [X] Implement logic to filter out students by grade and subject
 - [X] Persist selected filters between sessions
 
-## Phase 5: Daily Tracking Logic
+## Phase 5.1: View weekly scores
+- [ ] Create new button in main panel for viewing scores
+- [ ] When selecting view scores -> select quarter
+- [ ] When selecting a quarter -> select week
+- [ ] When selecting a week -> display weekly scores of all students
+  - [ ] Make scores filterable by grade and subject
+  - [ ] Include button to go to a specific day in that week 
+
+## Phase 5.2: Daily Tracking Logic
 - [X] Implement saving of daily scores per student (linked to `days`)
 - [ ] Implement changeable participation weight
 - [ ] Implement changeable camera weight

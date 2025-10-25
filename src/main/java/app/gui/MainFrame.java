@@ -39,12 +39,14 @@ public class MainFrame extends JFrame {
     StudentManagerPanel studentPanel = new StudentManagerPanel(this);
     QuartersPanel quartersPanel = new QuartersPanel(this);
     DailyTrackingPanel dailyPanel = new DailyTrackingPanel(this);
+    ViewWeeklyScoresPanel scoresPanel = new ViewWeeklyScoresPanel(this);
     // SettingsPanel settingsPanel = new SettingsPanel(this);
 
     cardPanel.add(menuPanel, "menu");
     cardPanel.add(dailyPanel, "daily");
     cardPanel.add(studentPanel, "students");
     cardPanel.add(quartersPanel, "quarters");
+    cardPanel.add(scoresPanel, "scores");
     // cardPanel.add(settingsPanel, "settings");
 
     setContentPane(cardPanel);

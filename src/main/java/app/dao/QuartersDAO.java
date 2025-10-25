@@ -100,7 +100,7 @@ public class QuartersDAO {
     if (quarters.isEmpty()) {
       startDate = nextMonday(LocalDate.now());
     } else {
-      Quarter last = quarters.get(quarters.size() - 1);
+      Quarter last = quarters.getLast();
       startDate = nextMonday(last.getStartDate().plusWeeks(1));
     }
 

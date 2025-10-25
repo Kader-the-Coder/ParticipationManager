@@ -31,16 +31,19 @@ public class MainMenuPanel extends JPanel {
     JPanel buttonPanel = new JPanel();
     buttonPanel.setLayout(new GridLayout(0, 1, 10, 10));
 
+    JButton scoresButton = new JButton("View Scores");
     JButton dailyButton = new JButton("Manage Participation");
     JButton studentsButton = new JButton("Manage Students");
     JButton quartersButton = new JButton("Manage Quarters");
     JButton settingsButton = new JButton("Settings");
 
+    scoresButton.addActionListener(e -> mainFrame.showPanel("scores"));
     dailyButton.addActionListener(e -> mainFrame.showPanel("daily"));
     studentsButton.addActionListener(e -> mainFrame.showPanel("students"));
     quartersButton.addActionListener(e -> mainFrame.showPanel("quarters"));
     settingsButton.addActionListener(e -> mainFrame.showPanel("settings"));
 
+    buttonPanel.add(scoresButton);
     buttonPanel.add(dailyButton);
     buttonPanel.add(studentsButton);
     buttonPanel.add(quartersButton);
