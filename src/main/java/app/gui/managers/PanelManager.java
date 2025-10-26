@@ -53,4 +53,8 @@ public class PanelManager {
   public Map<String, JPanel> getRegisteredPanels() {
     return Collections.unmodifiableMap(panels);
   }
+
+  public JPanel getPanelByName(String name) {
+    return panels.get(name); // assuming 'panels' is your LinkedHashMap<String, JPanel>
+  }
 }

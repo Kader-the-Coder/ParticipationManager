@@ -46,9 +46,8 @@ public class MainFrame extends JFrame {
     panelManager.addPanel("menu", new MainMenuPanel(this, panelManager));
 
     // ---------------------------------------------------------------------------------------------
-
     setContentPane(cardPanel);
-    panelManager.showPanel("menu");
+    showPanel("menu");
 
     addWindowListener(new java.awt.event.WindowAdapter() {
       @Override
@@ -58,11 +57,24 @@ public class MainFrame extends JFrame {
     });
   }
 
+  /**
+   * Show a panel by name. Refreshes the panel before displaying it.
+   */
   public void showPanel(String name) {
+    JPanel panel = panelManager.getPanelByName(name);
+    if (panel instanceof BasePanel bp) {
+      bp.refresh(); // refresh before showing
+    }
     panelManager.showPanel(name);
   }
 
+  /**
+   * Show a specific panel instance. Refreshes if it is a BasePanel.
+   */
   public void showPanel(JPanel panel) {
+    if (panel instanceof BasePanel bp) {
+      bp.refresh();
+    }
     panelManager.showPanel(panel);
   }
 

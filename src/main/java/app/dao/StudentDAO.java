@@ -148,18 +148,68 @@ public class StudentDAO {
   public static void deleteStudent(int studentId) {
     Connection conn = DB.getConnection();
     try {
-      // Delete subject links first
-      deleteAllSubjectsForStudent(studentId);
+      conn.setAutoCommit(false);
 
-      // Delete student
-      String sql = "DELETE FROM students WHERE id = ?";
-      try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      // Delete associated records first
+      deleteAllSubjectsForStudent(studentId);
+      deleteAllScoresForStudent(studentId);
+
+      // Delete the student
+      try {
+        String sql = "DELETE FROM students WHERE id = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, studentId);
         stmt.executeUpdate();
+        stmt.close();
+      } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error deleting student record for ID: " + studentId, e);
+      }
+
+      // Commit transaction
+      try {
+        conn.commit();
+      } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error committing transaction when deleting student ID: " + studentId, e);
       }
 
     } catch (SQLException e) {
-      LOGGER.log(Level.SEVERE, "Error deleting student", e);
+      LOGGER.log(Level.SEVERE, "Error handling delete transaction for student ID: " + studentId, e);
+      try {
+        conn.rollback();
+      } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Error rolling back transaction for student ID: " + studentId, ex);
+      }
+    } finally {
+      try {
+        conn.setAutoCommit(true);
+      } catch (SQLException e) {
+        LOGGER.log(Level.WARNING, "Failed to reset autocommit after deleting student ID: " + studentId, e);
+      }
+    }
+  }
+
+  private static void deleteAllSubjectsForStudent(int studentId) {
+    String sql = "DELETE FROM student_subject WHERE student_id = ?";
+    Connection conn = DB.getConnection();
+
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+      stmt.setInt(1, studentId);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error deleting subjects for student ID: " + studentId, e);
+    }
+  }
+
+  private static void deleteAllScoresForStudent(int studentId) {
+    Connection conn = DB.getConnection();
+    try {
+      String sql = "DELETE FROM daily_scores WHERE student_id = ?";
+      PreparedStatement stmt = conn.prepareStatement(sql);
+      stmt.setInt(1, studentId);
+      stmt.executeUpdate();
+      stmt.close();
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error deleting scores for student ID: " + studentId, e);
     }
   }
 
@@ -186,16 +236,6 @@ public class StudentDAO {
       stmt.executeUpdate();
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Error removing subject from student", e);
-    }
-  }
-
-  private static void deleteAllSubjectsForStudent(int studentId) throws SQLException {
-    String sql = "DELETE FROM student_subject WHERE student_id = ?";
-    Connection conn = DB.getConnection();
-
-    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setInt(1, studentId);
-      stmt.executeUpdate();
     }
   }
 
@@ -234,4 +274,5 @@ public class StudentDAO {
 
     return subjectIds;
   }
+
 }

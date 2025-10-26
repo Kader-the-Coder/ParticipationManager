@@ -35,61 +35,29 @@ public class PanelTemplate<T> {
 
     frame.add(contentPanel, BorderLayout.CENTER);
 
-    // Track current layout mode: horizontal by default
     final boolean[] isVertical = {false};
+    final int thresholdWidth = 300;
 
     frame.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
-        int textWidth = infoLabel.getPreferredSize().width;
-        int buttonsWidth = buttonsPanel.getPreferredSize().width;
-        int total = textWidth + buttonsWidth + 80;
+        int frameWidth = frame.getWidth();
 
-        if (frame.getWidth() < total) {
-          if (!isVertical[0]) { // only switch if not already vertical
-            // Switch to vertical centered layout
-            contentPanel.removeAll();
-            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        // Dynamically calculate the button width for normal layout
+        int buttonsWidth = calculateButtonsWidth(buttonsPanel);
 
-            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            infoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            ((FlowLayout) buttonsPanel.getLayout()).setAlignment(FlowLayout.CENTER);
+        // In horizontal layout, truncate label text based on button width
+        // In vertical layout, truncate label text based on full frame width
+        int minWidth = isVertical[0] ? frameWidth : buttonsWidth;
 
-            truncateLabelText(infoLabel, fullText, frame.getWidth() - 60);
+        truncateLabelText(infoLabel, fullText, frameWidth - minWidth);
 
-            // Resize buttons smaller for vertical layout
-            resizeButtons(buttons, 22);
-
-            contentPanel.add(infoPanel);
-            contentPanel.add(Box.createVerticalStrut(4));
-            contentPanel.add(buttonsPanel);
-
-            isVertical[0] = true;
-            contentPanel.revalidate();
-            contentPanel.repaint();
-          }
-        } else {
-          if (isVertical[0]) { // only switch if currently vertical
-            // Switch back to horizontal layout
-            contentPanel.removeAll();
-            contentPanel.setLayout(new BorderLayout());
-
-            infoLabel.setHorizontalAlignment(SwingConstants.LEFT);
-            ((FlowLayout) buttonsPanel.getLayout()).setAlignment(FlowLayout.RIGHT);
-
-            infoLabel.setText(fullText); // restore full text
-
-            // Restore buttons to default size
-            resizeButtons(buttons, 30);
-
-            contentPanel.add(infoPanel, BorderLayout.CENTER);
-            contentPanel.add(buttonsPanel, BorderLayout.EAST);
-
-            isVertical[0] = false;
-            contentPanel.revalidate();
-            contentPanel.repaint();
-          }
+        if (frameWidth < thresholdWidth && !isVertical[0]) {
+          switchToVertical(contentPanel, infoLabel, infoPanel, buttonsPanel, buttons, fullText, frameWidth);
+          isVertical[0] = true;
+        } else if (frameWidth >= thresholdWidth && isVertical[0]) {
+          switchToHorizontal(contentPanel, infoLabel, infoPanel, buttonsPanel, buttons, fullText);
+          isVertical[0] = false;
         }
       }
     });
@@ -97,8 +65,67 @@ public class PanelTemplate<T> {
     return frame;
   }
 
-  /** Truncate text with ellipsis based on available width */
+  private int calculateButtonsWidth(JPanel buttonsPanel) {
+    int totalWidth = 0;
+    for (Component c : buttonsPanel.getComponents()) {
+      Dimension pref = c.getPreferredSize();
+      totalWidth += pref.width;
+    }
+
+    // Add spacing between buttons based on FlowLayout gaps
+    LayoutManager layout = buttonsPanel.getLayout();
+    if (layout instanceof FlowLayout flow) {
+      int gap = flow.getHgap();
+      int count = buttonsPanel.getComponentCount();
+      if (count > 1) totalWidth += gap * (count - 1);
+    }
+
+    // Add a small padding margin
+    totalWidth += 40;
+    return totalWidth;
+  }
+
+  private void switchToVertical(JPanel contentPanel, JLabel infoLabel, JPanel infoPanel, JPanel buttonsPanel, List<JButton> buttons, String fullText, int frameWidth) {
+    contentPanel.removeAll();
+    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    infoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    ((FlowLayout) buttonsPanel.getLayout()).setAlignment(FlowLayout.CENTER);
+
+    // Now truncate using full frame width instead of button width
+    truncateLabelText(infoLabel, fullText, frameWidth - 120);
+    resizeButtons(buttons, 22);
+
+    contentPanel.add(infoPanel);
+    contentPanel.add(Box.createVerticalStrut(4));
+    contentPanel.add(buttonsPanel);
+
+    contentPanel.revalidate();
+    contentPanel.repaint();
+  }
+
+  private void switchToHorizontal(JPanel contentPanel, JLabel infoLabel, JPanel infoPanel, JPanel buttonsPanel, List<JButton> buttons, String fullText) {
+    contentPanel.removeAll();
+    contentPanel.setLayout(new BorderLayout());
+
+    infoLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    ((FlowLayout) buttonsPanel.getLayout()).setAlignment(FlowLayout.RIGHT);
+
+    infoLabel.setText(fullText);
+    resizeButtons(buttons, 30);
+
+    contentPanel.add(infoPanel, BorderLayout.CENTER);
+    contentPanel.add(buttonsPanel, BorderLayout.EAST);
+
+    contentPanel.revalidate();
+    contentPanel.repaint();
+  }
+
   private void truncateLabelText(JLabel label, String fullText, int maxWidth) {
+    if (maxWidth <= 0) return;
+
     FontMetrics fm = label.getFontMetrics(label.getFont());
     if (fm.stringWidth(fullText) <= maxWidth) {
       label.setText(fullText);
@@ -116,7 +143,6 @@ public class PanelTemplate<T> {
     label.setText(sb.toString().trim() + ellipsis);
   }
 
-  /** Resize all RoundButtons to the given diameter */
   private void resizeButtons(List<JButton> buttons, int size) {
     for (JButton b : buttons) {
       if (b instanceof RoundButton roundButton) {

@@ -15,7 +15,7 @@ public abstract class BasePanel extends JPanel {
 
   protected final MainFrame mainFrame;
 
-  public BasePanel(MainFrame mainFrame) {
+  public BasePanel(MainFrame mainFrame  ) {
     this.mainFrame = mainFrame;
 
     setLayout(new BorderLayout(10, 10));
@@ -40,6 +40,7 @@ public abstract class BasePanel extends JPanel {
 
     // Additional buttons panel on the right
     additionalButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+
     footerPanel.add(additionalButtonsPanel, BorderLayout.EAST);
   }
 
@@ -61,5 +62,12 @@ public abstract class BasePanel extends JPanel {
     additionalButtonsPanel.add(button);
     additionalButtonsPanel.revalidate();
     additionalButtonsPanel.repaint();
+  }
+
+  /**
+   * Refresh the panel. By default does nothing; override in subclasses.
+   */
+  public void refresh() {
+    // Subclasses can override to reload data when panel is displayed
   }
 }
