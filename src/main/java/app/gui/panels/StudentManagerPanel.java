@@ -1,6 +1,9 @@
-package main.java.app.gui;
+package main.java.app.gui.panels;
 
 import main.java.app.dao.*;
+import main.java.app.gui.components.RoundButton;
+import main.java.app.gui.frames.MainFrame;
+import main.java.app.gui.templates.PanelTemplate;
 import main.java.app.models.Student;
 
 import javax.swing.*;
@@ -9,43 +12,29 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
-public class StudentManagerPanel extends JPanel {
+public class StudentManagerPanel extends BasePanel {
 
   private final JPanel mainPanel;
 
   public StudentManagerPanel(MainFrame mainFrame) {
-    setLayout(new BorderLayout(20, 20));
-    setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    super(mainFrame);
 
     // Header
-    JLabel titleLabel = new JLabel("Manage Students");
-    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-    titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    add(titleLabel, BorderLayout.NORTH);
+    JLabel headerLabel = new JLabel("Manage Students");
+    headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    setHeaderComponent(headerLabel);
 
     // Main scrollable panel
     mainPanel = new JPanel();
     mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-    JScrollPane scrollPane = new JScrollPane(mainPanel);
-    add(scrollPane, BorderLayout.CENTER);
+    setBodyComponent(mainPanel);
 
-    // Bottom panel with buttons
-    JPanel bottomPanel = new JPanel(new BorderLayout());
+    // Footer button: Add Student
+    JButton addStudentBtn = new JButton("➕ Add Student");
+    addFooterButton(addStudentBtn);
 
-    JButton addButton = new JButton("➕ Add Student");
-    JPanel addButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    addButtonPanel.add(addButton);
-    bottomPanel.add(addButtonPanel, BorderLayout.NORTH);
-
-    JButton backButton = new JButton("⬅ Back to Menu");
-    JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    backButtonPanel.add(backButton);
-    bottomPanel.add(backButtonPanel, BorderLayout.SOUTH);
-
-    add(bottomPanel, BorderLayout.SOUTH);
-
-    addButton.addActionListener(ignored -> addNewStudent());
-    backButton.addActionListener(ignored -> mainFrame.showPanel("menu"));
+    addStudentBtn.addActionListener(e -> addNewStudent());
 
     loadStudents();
   }
@@ -57,7 +46,7 @@ public class StudentManagerPanel extends JPanel {
     Function<Student, String[]> fieldInfo = this::getFieldInfo;
     Function<Student, List<JButton>> buttonSupplier = this::getJButtons;
 
-    FrameBuilder<Student> builder = new FrameBuilder<>(mainPanel);
+    PanelTemplate<Student> builder = new PanelTemplate<>(mainPanel);
     for (Student s : students) {
       JPanel frame = builder.buildFrame(fieldInfo.apply(s), buttonSupplier.apply(s));
       frame.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));

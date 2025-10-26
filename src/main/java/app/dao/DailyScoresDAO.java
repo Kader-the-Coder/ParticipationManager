@@ -132,34 +132,88 @@ public class DailyScoresDAO {
   }
 
   public static Integer getLastDayIdForQuarter(int quarterId) {
+    LocalDate startDate = getStartDateById(quarterId);
+    LocalDate nextQuarterStart = getNextQuarterStartDate(quarterId);
+
+    if (startDate == null) {
+      LOGGER.log(Level.WARNING, "Start date not found for quarter ID: " + quarterId);
+      return null;
+    }
+
+    LocalDate endDate = (nextQuarterStart != null) ? nextQuarterStart : LocalDate.of(9999, 12, 31);
+
     String sql = """
         SELECT MAX(ds.day_id) AS last_day_id
         FROM daily_scores ds
         JOIN days d ON ds.day_id = d.id
-        WHERE d.quarter_id = ?
+        WHERE d.date >= ? AND d.date < ?
     """;
 
     Connection conn = DB.getConnection();
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setInt(1, quarterId);
+      stmt.setString(1, startDate.toString());
+      stmt.setString(2, endDate.toString());
       try (ResultSet rs = stmt.executeQuery()) {
         if (rs.next()) {
           int lastDayId = rs.getInt("last_day_id");
-          if (!rs.wasNull()) {
-            return lastDayId;
-          }
+          if (!rs.wasNull()) return lastDayId;
         }
       }
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Error fetching last day id for quarter " + quarterId, e);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unexpected error fetching last day id for quarter " + quarterId, e);
     }
 
-    // No daily scores found for this quarter
+    return null;
+  }
+
+  public static LocalDate getStartDateById(int id) {
+    String sql = "SELECT start_date FROM quarters WHERE id = ?";
+    Connection conn = DB.getConnection();
+    try {
+      PreparedStatement stmt = conn.prepareStatement(sql);
+      stmt.setInt(1, id);
+      ResultSet rs = stmt.executeQuery();
+      if (rs.next()) {
+        long timestamp = rs.getLong("start_date");
+        return LocalDate.ofEpochDay(timestamp / (24 * 60 * 60 * 1000));
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error fetching start date for quarter ID: " + id, e);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unexpected error while getting start date for quarter ID: " + id, e);
+    }
+    return null;
+  }
+
+  public static LocalDate getNextQuarterStartDate(int id) {
+    String sql = """
+        SELECT q2.start_date
+        FROM quarters q1
+        JOIN quarters q2 ON q2.start_date > q1.start_date
+        WHERE q1.id = ?
+        ORDER BY q2.start_date ASC
+        LIMIT 1
+    """;
+    Connection conn = DB.getConnection();
+    try {
+      PreparedStatement stmt = conn.prepareStatement(sql);
+      stmt.setInt(1, id);
+      ResultSet rs = stmt.executeQuery();
+      if (rs.next()) {
+        long timestamp = rs.getLong("start_date");
+        return LocalDate.ofEpochDay(timestamp / (24 * 60 * 60 * 1000));
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error fetching next quarter start date for ID: " + id, e);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unexpected error while getting next quarter start date for ID: " + id, e);
+    }
     return null;
   }
 
   public static Double getAverageScoreForWeek(LocalDate quarterStart, int weekNumber) {
-    // Compute start and end dates for the week
     LocalDate weekStart = quarterStart.plusWeeks(weekNumber - 1);
     LocalDate weekEnd = weekStart.plusDays(6);
 
@@ -186,8 +240,7 @@ public class DailyScoresDAO {
         + " starting " + weekStart, e);
     }
 
-    return null; // no scores recorded for this week
+    return null;
   }
-
 
 }
