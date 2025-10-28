@@ -56,10 +56,10 @@ public class DailyTrackingPanel extends BasePanel {
     subjectFilter.setPreferredSize(new Dimension(70, uniformHeight));
 
     gradeFilter.addItem(allGrades);
-    for (String g : GradeDAO.getAllGradeNames()) gradeFilter.addItem(g);
+    for (String g : GradesDAO.getAllGradeNames()) gradeFilter.addItem(g);
 
     subjectFilter.addItem(allSubjects);
-    for (String s : SubjectDAO.getAllSubjectNames()) subjectFilter.addItem(s);
+    for (String s : SubjectsDAO.getAllSubjectNames()) subjectFilter.addItem(s);
 
     String lastGrade = SettingsDAO.loadSetting("last_grade_filter", allGrades);
     String lastSubject = SettingsDAO.loadSetting("last_subject_filter", allSubjects);
@@ -148,14 +148,14 @@ public class DailyTrackingPanel extends BasePanel {
     String selectedSubject = (String) subjectFilter.getSelectedItem();
 
     Integer gradeId = (selectedGrade != null && !selectedGrade.equals(allGrades))
-      ? GradeDAO.getGradeIdByName(selectedGrade)
+      ? GradesDAO.getGradeIdByName(selectedGrade)
       : null;
 
     Integer subjectId = (selectedSubject != null && !selectedSubject.equals(allSubjects))
-      ? SubjectDAO.getSubjectIdByName(selectedSubject)
+      ? SubjectsDAO.getSubjectIdByName(selectedSubject)
       : null;
 
-    List<Student> students = StudentDAO.getFilteredStudents(gradeId, subjectId);
+    List<Student> students = StudentsDAO.getFilteredStudents(gradeId, subjectId);
 
     for (Student s : students) {
       DailyScore score = DailyScoresDAO.getScore(s.getId(), dayID);
@@ -222,17 +222,39 @@ public class DailyTrackingPanel extends BasePanel {
 
   private DailyScore toggleProperty(Student student, String property) {
     DailyScore score = DailyScoresDAO.getScore(student.getId(), dayID);
-    if (score == null) score = new DailyScore(student.getId(), dayID);
 
-    switch (property) {
-      case "attendance" -> score.setAttendance(score.getAttendance() == 1 ? 2 : 1);
-      case "participation" -> score.setParticipation(score.getParticipation() == 1 ? 2 : 1);
-      case "camera" -> score.setCamera(score.getCamera() == 1 ? 2 : 1);
-      case "onTime" -> score.setOnTime(score.getOnTime() == 1 ? 2 : 1);
-      case "behaviour" -> score.setBehaviour(score.getBehaviour() == 1 ? 2 : 1);
+    // If no score exists yet, create it with all 0s
+    if (score == null) {
+      score = new DailyScore(student.getId(), dayID);
+      DailyScoresDAO.insertOrUpdate(score); // persist immediately
     }
 
+    // Toggle the property: 0 -> 1, 1 -> 0
+    switch (property) {
+      case "attendance" -> score.setAttendance(score.getAttendance() == 0 ? 1 : 0);
+      case "participation" -> score.setParticipation(score.getParticipation() == 0 ? 1 : 0);
+      case "camera" -> score.setCamera(score.getCamera() == 0 ? 1 : 0);
+      case "onTime" -> score.setOnTime(score.getOnTime() == 0 ? 1 : 0);
+      case "behaviour" -> score.setBehaviour(score.getBehaviour() == 0 ? 1 : 0);
+    }
+
+    // Persist the updated value
     DailyScoresDAO.insertOrUpdate(score);
+
+    // Debug output
+//    System.out.println(property + " = " +
+//      switch (property) {
+//        case "attendance" -> score.getAttendance();
+//        case "participation" -> score.getParticipation();
+//        case "camera" -> score.getCamera();
+//        case "onTime" -> score.getOnTime();
+//        case "behaviour" -> score.getBehaviour();
+//        default -> -1;
+//      }
+//    );
+
     return score;
   }
+
+
 }

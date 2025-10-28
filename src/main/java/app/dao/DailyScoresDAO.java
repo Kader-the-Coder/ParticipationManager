@@ -243,4 +243,55 @@ public class DailyScoresDAO {
     return null;
   }
 
+  public static Double getWeeklyScoreForStudent(int studentId, int quarterId, int weekNumber) {
+    LocalDate quarterStart = getStartDateById(quarterId);
+    if (quarterStart == null) return null;
+
+    LocalDate weekStart = quarterStart.plusWeeks(weekNumber - 1);
+    LocalDate weekEnd = weekStart.plusDays(6);
+
+    // Limit to last recorded day of the quarter
+    Integer lastDayId = getLastDayIdForQuarter(quarterId);
+    if (lastDayId != null) {
+      LocalDate lastDate = DaysDAO.getDateForDayId(lastDayId);
+      if (lastDate != null && weekEnd.isAfter(lastDate)) {
+        weekEnd = lastDate;
+      }
+    }
+
+    // Fetch all daily totals for this student in this week
+    List<Integer> totals = new ArrayList<>();
+    String sql = """
+        SELECT ds.daily_total
+        FROM daily_scores ds
+        JOIN days d ON ds.day_id = d.id
+        WHERE ds.student_id = ? AND d.date >= ? AND d.date <= ?
+    """;
+
+    Connection conn = DB.getConnection();
+    try {
+      PreparedStatement stmt = conn.prepareStatement(sql);
+      stmt.setInt(1, studentId);
+      stmt.setString(2, weekStart.toString());
+      stmt.setString(3, weekEnd.toString());
+
+      ResultSet rs = stmt.executeQuery();
+      while (rs.next()) {
+        totals.add(rs.getInt("daily_total"));
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error fetching weekly scores for student " + studentId, e);
+      return null;
+    }
+
+    if (totals.isEmpty()) return null;
+
+    // Compute average manually
+    double sum = 0;
+    for (int t : totals) sum += t;
+    return sum / totals.size();
+  }
+
+
+
 }

@@ -1,8 +1,8 @@
 package main.java.app.models;
 
-import main.java.app.dao.GradeDAO;
-import main.java.app.dao.StudentDAO;
-import main.java.app.dao.SubjectDAO;
+import main.java.app.dao.GradesDAO;
+import main.java.app.dao.StudentsDAO;
+import main.java.app.dao.SubjectsDAO;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class Student {
 
   // Returns the grade name
   public String getGradeName() {
-    return GradeDAO.getNameById(gradeId);
+    return GradesDAO.getNameById(gradeId);
   }
 
   // Returns the grade ID
@@ -52,7 +52,7 @@ public class Student {
   }
 
   public List<String> getSubjectNames() {
-    return SubjectDAO.getNamesForIds(subjectIds);
+    return SubjectsDAO.getNamesForIds(subjectIds);
   }
 
   public void setName(String name) {
@@ -71,13 +71,13 @@ public class Student {
    * Updates this student and their subjects in the database.
    */
   public void updateInDB() {
-    StudentDAO.updateStudent(this);
+    StudentsDAO.updateStudent(this);
   }
 
   /**
    * Deletes this student and their subjects from the database.
    */
   public void deleteFromDB() {
-    StudentDAO.deleteStudent(this.id);
+    StudentsDAO.deleteStudent(this.id);
   }
 }

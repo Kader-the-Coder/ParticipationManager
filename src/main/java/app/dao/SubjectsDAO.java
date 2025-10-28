@@ -7,9 +7,9 @@ import java.util.logging.*;
 /**
  * Data Access Object for managing subjects.
  */
-public class SubjectDAO {
+public class SubjectsDAO {
 
-  private static final Logger LOGGER = Logger.getLogger(SubjectDAO.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(SubjectsDAO.class.getName());
 
   /**
    * Retrieves all subjects from the database.

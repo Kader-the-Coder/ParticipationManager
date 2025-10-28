@@ -7,9 +7,9 @@ import java.util.logging.*;
 /**
  * Data Access Object for managing grades.
  */
-public class GradeDAO {
+public class GradesDAO {
 
-  private static final Logger LOGGER = Logger.getLogger(GradeDAO.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(GradesDAO.class.getName());
 
   /**
    * Retrieves all grade names from the database.

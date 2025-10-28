@@ -32,6 +32,7 @@ public class DailyScore {
     this.reflections = reflections;
   }
 
+  // Default constructor for a new day/student: all properties start at 0
   public DailyScore(int studentId, int dayId) {
     this.studentId = studentId;
     this.dayId = dayId;
@@ -40,7 +41,12 @@ public class DailyScore {
     this.onTime = 0;
     this.behaviour = 0;
     this.attendance = 0;
-    this.dailyTotal = 0;
+    recalculateTotal();
+  }
+
+  // Recalculate dailyTotal
+  public void recalculateTotal() {
+    this.dailyTotal = participation + camera + onTime + behaviour + attendance;
   }
 
   // Getters and setters
@@ -56,11 +62,26 @@ public class DailyScore {
   public String getNotes() { return notes; }
   public String getReflections() { return reflections; }
 
-  public void setParticipation(int participation) { this.participation = participation; }
-  public void setCamera(int camera) { this.camera = camera; }
-  public void setOnTime(int onTime) { this.onTime = onTime; }
-  public void setBehaviour(int behaviour) { this.behaviour = behaviour; }
-  public void setAttendance(int attendance) { this.attendance = attendance; }
+  public void setParticipation(int participation) {
+    this.participation = participation;
+    recalculateTotal();
+  }
+  public void setCamera(int camera) {
+    this.camera = camera;
+    recalculateTotal();
+  }
+  public void setOnTime(int onTime) {
+    this.onTime = onTime;
+    recalculateTotal();
+  }
+  public void setBehaviour(int behaviour) {
+    this.behaviour = behaviour;
+    recalculateTotal();
+  }
+  public void setAttendance(int attendance) {
+    this.attendance = attendance;
+    recalculateTotal();
+  }
   public void setDailyTotal(int dailyTotal) { this.dailyTotal = dailyTotal; }
   public void setNotes(String notes) { this.notes = notes; }
   public void setReflections(String reflections) { this.reflections = reflections; }

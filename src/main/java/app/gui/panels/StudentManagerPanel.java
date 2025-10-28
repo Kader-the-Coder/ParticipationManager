@@ -41,7 +41,7 @@ public class StudentManagerPanel extends BasePanel {
 
   private void loadStudents() {
     mainPanel.removeAll();
-    List<Student> students = StudentDAO.getAllStudents();
+    List<Student> students = StudentsDAO.getAllStudents();
 
     Function<Student, String[]> fieldInfo = this::getFieldInfo;
     Function<Student, List<JButton>> buttonSupplier = this::getJButtons;
@@ -79,15 +79,15 @@ public class StudentManagerPanel extends BasePanel {
     String name = JOptionPane.showInputDialog(mainPanel, "Enter Student Name:");
     if (name == null || name.trim().isEmpty()) return;
 
-    List<String> grades = GradeDAO.getAllGradeNames();
+    List<String> grades = GradesDAO.getAllGradeNames();
     grades.sort(Comparator.comparingInt(Integer::parseInt));
     String[] gradesArray = grades.toArray(new String[0]);
     String gradeName = (String) JOptionPane.showInputDialog(
       mainPanel, "Select Grade:", "New Student", JOptionPane.PLAIN_MESSAGE, null, gradesArray, gradesArray[0]);
     if (gradeName == null) return;
-    int gradeId = GradeDAO.getGradeIdByName(gradeName);
+    int gradeId = GradesDAO.getGradeIdByName(gradeName);
 
-    List<String> allSubjects = SubjectDAO.getAllSubjects();
+    List<String> allSubjects = SubjectsDAO.getAllSubjects();
     JList<String> subjectList = new JList<>(allSubjects.toArray(new String[0]));
     subjectList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
@@ -98,10 +98,10 @@ public class StudentManagerPanel extends BasePanel {
     List<String> selectedSubjects = subjectList.getSelectedValuesList();
     List<Integer> subjectIds = new ArrayList<>();
     for (String subjName : selectedSubjects)
-      subjectIds.add(SubjectDAO.getSubjectId(subjName));
+      subjectIds.add(SubjectsDAO.getSubjectId(subjName));
 
     Student newStudent = new Student(name, gradeId, subjectIds);
-    StudentDAO.addStudent(newStudent);
+    StudentsDAO.addStudent(newStudent);
 
     loadStudents();
   }
@@ -110,15 +110,15 @@ public class StudentManagerPanel extends BasePanel {
     String newName = JOptionPane.showInputDialog(mainPanel, "Edit Name:", student.getName());
     if (newName == null || newName.trim().isEmpty()) return;
 
-    List<String> grades = GradeDAO.getAllGradeNames();
+    List<String> grades = GradesDAO.getAllGradeNames();
     grades.sort(Comparator.comparingInt(Integer::parseInt));
     String[] gradesArray = grades.toArray(new String[0]);
     String newGrade = (String) JOptionPane.showInputDialog(
       mainPanel, "Select Grade:", "Edit Grade", JOptionPane.PLAIN_MESSAGE, null, gradesArray, student.getGradeName());
     if (newGrade == null) return;
-    int newGradeId = GradeDAO.getGradeIdByName(newGrade);
+    int newGradeId = GradesDAO.getGradeIdByName(newGrade);
 
-    List<String> allSubjects = SubjectDAO.getAllSubjects();
+    List<String> allSubjects = SubjectsDAO.getAllSubjects();
     JList<String> subjectList = new JList<>(allSubjects.toArray(new String[0]));
     subjectList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
@@ -136,12 +136,12 @@ public class StudentManagerPanel extends BasePanel {
     List<String> newSubjects = subjectList.getSelectedValuesList();
     List<Integer> newSubjectIds = new ArrayList<>();
     for (String subjName : newSubjects)
-      newSubjectIds.add(SubjectDAO.getSubjectId(subjName));
+      newSubjectIds.add(SubjectsDAO.getSubjectId(subjName));
 
     student.setName(newName);
     student.setGradeId(newGradeId);
     student.setSubjectIds(newSubjectIds);
-    StudentDAO.updateStudent(student);
+    StudentsDAO.updateStudent(student);
 
     loadStudents();
   }
@@ -152,7 +152,7 @@ public class StudentManagerPanel extends BasePanel {
       "Confirm Delete",
       JOptionPane.YES_NO_OPTION);
     if (confirm == JOptionPane.YES_OPTION) {
-      StudentDAO.deleteStudent(student.getId());
+      StudentsDAO.deleteStudent(student.getId());
       loadStudents();
     }
   }

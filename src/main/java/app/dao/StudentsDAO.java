@@ -5,9 +5,9 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
 
-public class StudentDAO {
+public class StudentsDAO {
 
-  private static final Logger LOGGER = Logger.getLogger(StudentDAO.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(StudentsDAO.class.getName());
 
   /**
    * Adds a new student with associated subjects.
