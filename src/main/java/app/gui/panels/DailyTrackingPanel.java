@@ -1,86 +1,51 @@
 package main.java.app.gui.panels;
 
-import main.java.app.dao.*;
+import main.java.app.dao.DailyScoresDAO;
+import main.java.app.dao.DaysDAO;
+import main.java.app.dao.StudentsDAO;
+import main.java.app.gui.components.GradeSubjectFilter;
 import main.java.app.gui.components.RoundButton;
 import main.java.app.gui.frames.MainFrame;
+import main.java.app.gui.templates.HeaderPanelTemplate;
 import main.java.app.gui.templates.PanelTemplate;
 import main.java.app.models.DailyScore;
 import main.java.app.models.Student;
-import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DailyTrackingPanel extends BasePanel {
 
-  private final JComboBox<String> gradeFilter;
-  private final JComboBox<String> subjectFilter;
   private int dayID;
-  private final String allGrades = "XX";
-  private final String allSubjects = "XXXXX";
+  private final GradeSubjectFilter gradeSubjectFilter;
 
   public DailyTrackingPanel(MainFrame mainFrame) {
     super(mainFrame);
 
-    // Top wrapper
-    JPanel topWrapper = new JPanel();
-    topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));
+    // Filters + header using template
+    gradeSubjectFilter = new GradeSubjectFilter(25, (g, s) -> loadStudents());
 
-    // Combined date & filter row
-    JPanel topBar = new JPanel(new BorderLayout(5, 0));
+    HeaderPanelTemplate header = new HeaderPanelTemplate(
+      "Daily Tracking",
+      25,
+      gradeSubjectFilter,
+      newDate -> {
+        dayID = DaysDAO.getOrCreateDay(newDate);
+        loadStudents();
+      }
+    );
 
-    // Left: Date picker
-    JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
-    JButton prevDayButton = new JButton("◀");
-    JButton nextDayButton = new JButton("▶");
-
-    JDateChooser datePicker = new JDateChooser();
-    JTextField editor = (JTextField) datePicker.getDateEditor().getUiComponent();
-    datePicker.setDateFormatString("EE (MM/dd)");
-    int uniformHeight = editor.getPreferredSize().height - 2;
-    datePicker.setPreferredSize(new Dimension(100, uniformHeight));
-    editor.setHorizontalAlignment(SwingConstants.CENTER);
-    editor.setEditable(false);
-
-    datePanel.add(datePicker);
-
-    // Right: Filters
-    JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 2, 0));
-    gradeFilter = new JComboBox<>();
-    subjectFilter = new JComboBox<>();
-    gradeFilter.setPreferredSize(new Dimension(45, uniformHeight));
-    subjectFilter.setPreferredSize(new Dimension(70, uniformHeight));
-
-    gradeFilter.addItem(allGrades);
-    for (String g : GradesDAO.getAllGradeNames()) gradeFilter.addItem(g);
-
-    subjectFilter.addItem(allSubjects);
-    for (String s : SubjectsDAO.getAllSubjectNames()) subjectFilter.addItem(s);
-
-    String lastGrade = SettingsDAO.loadSetting("last_grade_filter", allGrades);
-    String lastSubject = SettingsDAO.loadSetting("last_subject_filter", allSubjects);
-    gradeFilter.setSelectedItem(lastGrade);
-    subjectFilter.setSelectedItem(lastSubject);
-
-    filterPanel.add(gradeFilter);
-    filterPanel.add(subjectFilter);
-
-    topBar.add(datePanel, BorderLayout.WEST);
-    topBar.add(filterPanel, BorderLayout.EAST);
-
-    topWrapper.add(topBar);
-    setHeaderComponent(topWrapper);
+    setHeaderComponent(header);
 
     // Main panel
     JPanel mainContent = new JPanel();
     mainContent.setLayout(new BoxLayout(mainContent, BoxLayout.Y_AXIS));
     setBodyComponent(mainContent);
 
-    // Add extra buttons in footer (right side)
+    // Footer button: clear day
     JButton clearDayButton = new JButton("Clear Day");
     clearDayButton.addActionListener(e -> {
       int confirm = JOptionPane.showConfirmDialog(
@@ -97,46 +62,8 @@ public class DailyTrackingPanel extends BasePanel {
     addFooterButton(clearDayButton);
 
     // Day handling
-    LocalDate[] selectedDay = {LocalDate.now()};
-    datePicker.setDate(java.sql.Date.valueOf(selectedDay[0]));
-    dayID = DaysDAO.getOrCreateDay(selectedDay[0]);
-
-    loadStudents();
-
-    // Listeners
-    datePicker.getDateEditor().addPropertyChangeListener(e -> {
-      if ("date".equals(e.getPropertyName())) {
-        java.util.Date date = (java.util.Date) e.getNewValue();
-        if (date != null) {
-          selectedDay[0] = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-          loadDayData(selectedDay[0]);
-        }
-      }
-    });
-
-    prevDayButton.addActionListener(ignored -> {
-      selectedDay[0] = selectedDay[0].minusDays(1);
-      datePicker.setDate(java.util.Date.from(selectedDay[0].atStartOfDay(ZoneId.systemDefault()).toInstant()));
-    });
-
-    nextDayButton.addActionListener(ignored -> {
-      selectedDay[0] = selectedDay[0].plusDays(1);
-      datePicker.setDate(java.util.Date.from(selectedDay[0].atStartOfDay(ZoneId.systemDefault()).toInstant()));
-    });
-
-    gradeFilter.addActionListener(e -> {
-      loadStudents();
-      SettingsDAO.saveSetting("last_grade_filter", (String) gradeFilter.getSelectedItem());
-    });
-
-    subjectFilter.addActionListener(e -> {
-      loadStudents();
-      SettingsDAO.saveSetting("last_subject_filter", (String) subjectFilter.getSelectedItem());
-    });
-  }
-
-  private void loadDayData(LocalDate day) {
-    dayID = DaysDAO.getOrCreateDay(day);
+    LocalDate selectedDay = LocalDate.now();
+    dayID = DaysDAO.getOrCreateDay(selectedDay);
     loadStudents();
   }
 
@@ -144,16 +71,8 @@ public class DailyTrackingPanel extends BasePanel {
     JPanel mainPanel = (JPanel) bodyScrollPane.getViewport().getView();
     mainPanel.removeAll();
 
-    String selectedGrade = (String) gradeFilter.getSelectedItem();
-    String selectedSubject = (String) subjectFilter.getSelectedItem();
-
-    Integer gradeId = (selectedGrade != null && !selectedGrade.equals(allGrades))
-      ? GradesDAO.getGradeIdByName(selectedGrade)
-      : null;
-
-    Integer subjectId = (selectedSubject != null && !selectedSubject.equals(allSubjects))
-      ? SubjectsDAO.getSubjectIdByName(selectedSubject)
-      : null;
+    Integer gradeId = gradeSubjectFilter.getSelectedGradeId();
+    Integer subjectId = gradeSubjectFilter.getSelectedSubjectId();
 
     List<Student> students = StudentsDAO.getFilteredStudents(gradeId, subjectId);
 
@@ -223,13 +142,11 @@ public class DailyTrackingPanel extends BasePanel {
   private DailyScore toggleProperty(Student student, String property) {
     DailyScore score = DailyScoresDAO.getScore(student.getId(), dayID);
 
-    // If no score exists yet, create it with all 0s
     if (score == null) {
       score = new DailyScore(student.getId(), dayID);
-      DailyScoresDAO.insertOrUpdate(score); // persist immediately
+      DailyScoresDAO.insertOrUpdate(score);
     }
 
-    // Toggle the property: 0 -> 1, 1 -> 0
     switch (property) {
       case "attendance" -> score.setAttendance(score.getAttendance() == 0 ? 1 : 0);
       case "participation" -> score.setParticipation(score.getParticipation() == 0 ? 1 : 0);
@@ -238,23 +155,7 @@ public class DailyTrackingPanel extends BasePanel {
       case "behaviour" -> score.setBehaviour(score.getBehaviour() == 0 ? 1 : 0);
     }
 
-    // Persist the updated value
     DailyScoresDAO.insertOrUpdate(score);
-
-    // Debug output
-//    System.out.println(property + " = " +
-//      switch (property) {
-//        case "attendance" -> score.getAttendance();
-//        case "participation" -> score.getParticipation();
-//        case "camera" -> score.getCamera();
-//        case "onTime" -> score.getOnTime();
-//        case "behaviour" -> score.getBehaviour();
-//        default -> -1;
-//      }
-//    );
-
     return score;
   }
-
-
 }

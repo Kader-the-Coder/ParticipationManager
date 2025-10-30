@@ -27,6 +27,7 @@ public abstract class BasePanel extends JPanel {
 
     // Body (scrollable)
     bodyScrollPane = new JScrollPane();
+    bodyScrollPane.getVerticalScrollBar().setUnitIncrement(5);
     add(bodyScrollPane, BorderLayout.CENTER);
 
     // Footer with BorderLayout

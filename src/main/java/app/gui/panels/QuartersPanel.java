@@ -1,11 +1,11 @@
 package main.java.app.gui.panels;
 
 import main.java.app.dao.QuartersDAO;
+import main.java.app.gui.components.DatePicker;
 import main.java.app.gui.components.RoundButton;
 import main.java.app.gui.frames.MainFrame;
 import main.java.app.gui.templates.PanelTemplate;
 import main.java.app.models.Quarter;
-import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +38,6 @@ public class QuartersPanel extends BasePanel {
     // Footer button: Add Quarter (right side)
     JButton addQuarterBtn = new JButton("➕ Add Quarter");
     addFooterButton(addQuarterBtn);
-
     addQuarterBtn.addActionListener(e -> addNewQuarter());
 
     loadQuarters();
@@ -109,13 +108,7 @@ public class QuartersPanel extends BasePanel {
 
   private void editQuarter(Quarter quarter) {
     JPanel panel = new JPanel(new FlowLayout());
-    JDateChooser datePicker = new JDateChooser();
-    datePicker.setDate(java.sql.Date.valueOf(quarter.getStartDate()));
-    datePicker.setDateFormatString("MM/dd/yyyy");
-    JTextField editor = (JTextField) datePicker.getDateEditor().getUiComponent();
-    editor.setHorizontalAlignment(SwingConstants.CENTER);
-    editor.setEditable(false);
-    datePicker.setPreferredSize(new Dimension(100, editor.getPreferredSize().height - 2));
+    DatePicker datePicker = new DatePicker(java.sql.Date.valueOf(quarter.getStartDate()));
     panel.add(new JLabel("Start Date:"));
     panel.add(datePicker);
 

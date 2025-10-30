@@ -28,7 +28,7 @@
 - [X] Create button to manage students
 - [X] Create button managing quarters
 - [X] Ensure code allows for adding more buttons in the future
-- [X] Add “Back to Menu” button/action in each subpanel
+- [X] Add “Back to Menu” button/action in each sub-panel
 - [X] Reserve space for future sections (e.g. Reports, Analytics)
 
 ## Phase 3.1: Daily Tracking UI - Core
@@ -39,7 +39,7 @@
 
 ## Phase 3.2: Daily Tracking UI - Additional
 - [X] Allow for determining the day
-- [X] Allow for removing a all data in a given day
+- [X] Allow for removing all data in a given day
 
 ## Phase 4: Daily Tracking Filters
 - [X] Implement logic to filter out students by grade and subject
@@ -49,8 +49,8 @@
 - [X] Create new button in main panel for viewing scores
 - [X] When selecting view scores -> select quarter
 - [X] When selecting a quarter -> select week
-- [ ] When selecting a week -> display weekly scores of all students
-  - [ ] Make scores filterable by grade and subject
+- [X] When selecting a week -> display weekly scores of all students
+  - [X] Make scores filterable by grade and subject
   - [ ] Include button to go to a specific day in that week 
 
 ## Phase 5.2: Daily Tracking Logic
@@ -66,8 +66,8 @@
 
 ## Phase 6: Quarters & Filters
 - [X] Implement CRUD for quarters (used as filters; start dates are saved)
-- [ ] Implement GUI for selecting quarter (week selection derived dynamically from days)
-- [ ] Implement dynamic week numbering logic based on quarter start date (programmatic, not stored)
+- [X] Implement GUI for selecting quarter (week selection derived dynamically from days)
+- [X] Implement dynamic week numbering logic based on quarter start date (programmatic, not stored)
 
 ## Phase 7: Retrieval & Editing
 - [ ] View scores per week for each student
